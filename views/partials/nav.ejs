@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand-sm navbar-light bg-light sticky-top">
+  <a class="navbar-brand" href="/">
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Blackbird_Turdus_merula_female_silhouette.svg/1280px-Blackbird_Turdus_merula_female_silhouette.svg.png"
+      width="30"
+      height="30"
+      alt=""
+    />
+  </a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto align-items-center">
+      <!-- <li class="nav-item active">
+        <a class="nav-link" href="#">ET Go Home <span class="sr-only">(current)</span></a>
+      </li> -->
+      <!-- <li class="nav-item dropdown">
+        <a
+          class="nav-link dropdown-toggle"
+          href="#"
+          id="navbarDropdown"
+          role="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Sign up / Login
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/sign-up">Sign Up</a>
+          <a class="dropdown-item" href="/login">Login</a>
+          <form action='/logout?_method=DELETE' method="POST">
+            <button type="submit" class="btn btn-danger btn-delete">Log Out</button>
+          </form>
+        </div>
+      </li> -->
+      <!-- <li class="nav-item">
+        <a class="nav-link" href="/sign-up">Sign Up</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+      </li> -->
+      <li class="nav-item">
+        <form action='/logout?_method=DELETE' method="POST">
+          <button type="submit" class="btn btn-delete">Log Out</button>
+        </form>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/note">New Entry</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/users/<%= userId %>">My Sightings</a>
+      </li>
+    </ul>
+  </div>
+</nav>

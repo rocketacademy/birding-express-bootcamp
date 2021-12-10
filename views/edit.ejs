@@ -1,0 +1,98 @@
+<%- include ('partials/header') %> 
+
+    <%- include ('partials/nav') %> 
+
+    <!-- USING JUMBOTRON -->
+    <section class="jumbotron my-jumbotron text-center">
+      <h1>BIRD SIGHTING JOURNAL</h1>
+      <h4 class="">✏️</h4>
+    </section>
+
+    <section class = "container-fluid my-container sightings-form">
+      <h4 class= "text-center">BIRD WATCH</h4>
+
+      <div class = 'row my-row justify-content-center'></div>
+      
+        <form action="/note/<%= dataForSelectedId.id %>/edit?_method=PUT" method="POST" class="needs-validation my-form" novalidate>
+          
+          <div class="form-group">
+            <div class="row form-row">
+              <div class="col form-col">
+                <label for="date_of_sighting">Date of sighting:</label>
+                <input type="date" max= <%= formMaxDate.maxDate %>  id="date_of_sighting" name="date_of_sighting" class="form-control" value="<%= dataForSelectedId.date_of_sighting %>"required>
+                <div class="invalid-feedback">Please provide a date</div>
+              </div>
+            </div>
+
+            <div class="row form-row">
+              <label for="species_id">Bird Species</label>
+              <select id="species_id" name="species_id" class="form-control" required>
+                  <option selected value = <%= previousSelectedBird.selectedBird.id %>><%= previousSelectedBird.selectedBird.name %> </option>
+                <% birdSpecies.birds.forEach((bird) => { %>
+                  <option value = <%= bird.id %> ><%= bird.name %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <div class="row form-row">
+              <label for="flock_size">Flock Size</label>
+              <select id="flock_size" name="flock_size" class="form-control" required>
+                <option selected><%= dataForSelectedId.flock_size %> </option>
+                <option>1</option>
+                <option>1-5</option>
+                <option >5-10</option>
+                <option>>10</option>
+              </select>
+            </div>
+
+          <div class="form-group form-medium">
+            <label for="appearance">Appearance</label>
+            <textarea class="form-control" rows="2" id="appearance" name="appearance" required><%= dataForSelectedId.appearance %></textarea>
+          </div>
+
+          <div class="form-group">
+            <p>Behaviour/Behaviours</p>
+            <% behavioursObj.behaviours.forEach((e) => { %>
+              <% if (e.checked === true) { %>
+                <label for = 'behaviour-type'><%= e.name %></label>
+                <input id = 'behaviour-type' type="checkbox" name="behaviour_id" value="<%= e.id %>" checked/>
+                <br> 
+                <%} else { %>
+                  <label for = 'behaviour-type'><%= e.name %></label>
+                  <input id = 'behaviour-type' type="checkbox" name="behaviour_id" value="<%= e.id %>" />
+                  <br>
+                <% }; %>
+            <% }); %>
+          </div>
+      
+          <button type="submit" class="btn btn-primary btn-submit">Make Changes</button>
+        </form>
+      </div>
+
+      <div class = 'row my-row justify-content-center'>
+        <a href="/" >Back to homepage</a>
+      </div>
+    </section>
+
+    <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation');
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        }, false);
+      })();
+    </script>
+
+<%- include ('partials/footer') %> 

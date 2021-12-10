@@ -1,0 +1,70 @@
+<%- include ('partials/header') %> 
+
+  <%- include ('partials/nav') %>
+
+  <!-- USING JUMBOTRON -->
+  <section class="jumbotron my-jumbotron text-center">
+    <h1 class="">BIRD SIGHTINGS</h1>
+    <h4>🐦🐦🐦</h4>
+    <hr class="my-4" />
+    <p>Big bird small bird all kinds of birds</p>
+  </section>
+
+  <!--  TABLE ALL SIGHTINGS -->
+  <section class="sightings-list">
+    <h3 class="text-center">Welcome back <%= userName %> !</h3>
+    <h3 class="text-center">List of all sightings</h3>
+    <table class="table table-striped table-dark">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date of sighting 
+            <div class="btn-group dropright">
+              <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="sort=asc">ASC</a>
+                <a class="dropdown-item" href="sort=desc">DSC</a>
+              </div>
+            </div>
+          </th>
+          <th scope="col">Flock Size</th>
+          <th scope="col">ID</th>
+          <th scope="col">Btn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Create new element for each sighting -->
+        <% for (let i = 0; i< dataArr.arr.length; i+=1) { %>
+        <tr>
+          <th scope="row">#<%= i+1 %></th>
+          <td><%= dateOfSightingArr.sightingArr[i] %></td>
+          <td><%= dataArr.arr[i].flock_size %></td>
+          <th scope="row"><%= dataArr.arr[i].id%></th>
+          <td>
+            <form action="">
+              <button
+                type="submit"
+                formaction="/note/<%= dataArr.arr[i].id%>?_method=DELETE"
+                formmethod="POST"
+                class="btn btn-danger view-btn"
+              >
+                Delete
+              </button>
+              <button
+                type="submit"
+                formaction="/note/<%= dataArr.arr[i].id%>"
+                formmethod="GET"
+                class="btn btn-primary delete-btn"
+              >
+                View
+              </button>
+            </form>
+          </td>
+        </tr>
+        <% }; %>
+      </tbody>
+    </table>
+  </section>
+
+<%- include ('partials/footer') %>

@@ -1,0 +1,60 @@
+<%- include ('partials/header') %> 
+
+    <%- include ('partials/nav') %> 
+    <!-- USING JUMBOTRON -->
+    <section class="jumbotron my-jumbotron text-center">
+      <h1>SIGHTING ID <%= dataForSelectedId.id %></h1>
+      <h4 class="">👀</h4>
+      <hr class="my-4" />
+      <p><strong>Date Posted: </strong> ???</p>
+    </section>
+
+    <section class = 'container-fluid my-container sightings'>
+      <div class = 'row my-row justify-content-center'>
+
+        <div class="col-12 my-col">
+          <p><strong>Date of sighting:</strong></p>
+          <p><%= dataForSelectedId.date_of_sighting %></p>
+        </div>
+
+        <div class="col-12 my-col">
+          <p><strong>Bird Species </strong></p>
+          <p><%= selectedBird.birdName %></p>
+        </div>
+
+        <div class="col-12 my-col">
+          <p><strong>Flock Size </strong></p>
+          <p><%= dataForSelectedId.flock_size %></p>
+        </div>
+
+        <div class="col-12 my-col">
+          <p><strong>Appearance </strong></p>
+          <p><%= dataForSelectedId.appearance %></p>
+        </div>
+
+        <div class="col-12 my-col">
+          <p><strong>Behaviour / Behaviours </strong></p>
+          <% behavioursObj.behavioursArr.forEach(behaviour => { %>
+            <span><%= behaviour.name %>, </span>
+          <% }); %>
+        </div>
+
+      </div>
+      <br>
+      <div class = 'row my-row justify-content-center'>
+        <div class="col-12 my-col">
+          <a class="btn btn-primary btn-edit" href="/note/<%= dataForSelectedId.id %>/edit" role="button">Edit this post</a>
+        </div>
+        <div class = 'col-12 my-col'>
+          <form action='/note/<%= dataForSelectedId.id %>?_method=DELETE' method="POST">
+            <button type="submit" class="btn btn-danger btn-delete">Delete This Post</button>
+          </form>
+        </div>
+      </div>
+
+      <div class = 'row my-row justify-content-center'>
+        <a href="/" >Back to homepage</a>
+      </div>
+    </section>
+
+<%- include ('partials/footer') %> 

@@ -20,12 +20,30 @@ import pg from 'pg'; // npm install pg
 
 // Initialise the DB connection
 const { Pool } = pg;
-const pgConnectionConfigs = {
-  user: 'eddiejpot',
-  host: 'localhost',
-  database: 'birding',
-  port: 5432, // Postgres server always runs on this port by default
-};
+
+// create separate DB connection configs for production vs non-production environments.
+// ensure our server still works on our local machines.
+let pgConnectionConfigs;
+if (process.env.ENV === 'PRODUCTION') {
+  // determine how we connect to the remote Postgres server
+  pgConnectionConfigs = {
+    user: 'postgres',
+    // set DB_PASSWORD as an environment variable for security.
+    password: process.env.DB_PASSWORD,
+    host: 'localhost',
+    database: 'birding',
+    port: 5432,
+  };
+} else {
+  // determine how we connect to the local Postgres server
+  pgConnectionConfigs = {
+    user: 'eddiejot',
+    host: 'localhost',
+    database: 'birding',
+    port: 5432,
+  };
+}
+
 const pool = new Pool(pgConnectionConfigs);
 
 /* ============================================================================ */
@@ -34,7 +52,7 @@ const pool = new Pool(pgConnectionConfigs);
 
 // Initialise Express
 const app = express();
-const PORT = 3004;
+const PORT = process.argv[2];
 
 // Override POST requests with query param ?_method=PUT to be PUT requests
 app.use(methodOverride('_method'));
