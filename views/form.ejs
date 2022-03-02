@@ -1,0 +1,33 @@
+<%- include('header'); -%>
+
+<div class="container">
+  <div
+    class="col-12 my-5 d-flex align-items-center justify-content-center flex-column text-white"
+  >
+    <div class="bg-secondary p-3 rounded">
+      <form action="/note" method="post">
+        <label for="date_time">Date & Time :</label><br />
+        <input
+          type="datetime-local"
+          id="date_time"
+          name="date_time"
+          size="50"
+          class="form-control"
+          max="<%= createTime.toISOString() %>"
+          required
+        /><br />
+        <label for="city">Behavior:</label><br />
+        <input
+          type="text"
+          id="city"
+          name="city"
+          size="50"
+          class="form-control"
+          required
+        /><br />
+        <label for="flocksize">Flock Size</label>
+        <input type="number" id="flocksize" name="flocksize" min="10" />
+      </form>
+    </div>
+  </div>
+</div>
