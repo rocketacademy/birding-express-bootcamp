@@ -1,0 +1,1 @@
+/Applications/Postgres.app/Contents/Versions/14/bin/postgres "-D" "/Users/gysiang/Documents/bootcamp/projects/birding-express-bootcamp/database" "-p" "5432"

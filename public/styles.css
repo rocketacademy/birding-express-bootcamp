@@ -1,0 +1,28 @@
+h1 {
+  color: white;
+}
+
+.bg-color {
+  background-color: #00b4d8;
+}
+
+a:link {
+  color: black;
+}
+
+.logo-image {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  line-height: 60px; /* Vertically center the text there */
+  background-color: rgb(255, 254, 254);
+}

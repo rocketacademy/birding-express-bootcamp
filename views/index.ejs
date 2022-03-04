@@ -4,7 +4,30 @@
     <br />
     <h1>List of Sightings</h1>
     <br />
+    <table class="table table-sm table-dark">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Date Time</th>
+          <th>Behavior</th>
+          <th>Flock Size</th>
+          <th>More</th>
+        </tr>
+        <% for (let i=0; i < data.notes.length; i += 1) { %>
+        <tr>
+          <td><%= data.notes[i].id %></td>
+          <td><%= data.notes[i].date_time %></td>
+          <td><%= data.notes[i].behavior %></td>
+          <td><%= data.notes[i].flocksize %></td>
+          <td>
+            <a href="/sighting/<%= i %>" class="btn btn-info">Edit</a>
+          </td>
+          <% } %>
+        </tr>
+      </thead>
 
+      <tbody></tbody>
+    </table>
     <br />
     <a href="/note">
       <input
