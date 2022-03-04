@@ -7,6 +7,10 @@ const app = express();
 // Override POST requests with query param ?_method=PUT to be PUT requests
 app.use(methodOverride('_method'));
 
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: false }));
+
 // const PORT = process.argv[2];
 
 // Initialise DB connection
@@ -23,47 +27,48 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
-// // 1 /note GET route
-// app.get('/note', (req, res) => {
-//   const getAllQuery = 'SELECT notes.id, notes.behavior, notes.flock_size';
-//   pool.query(getAllQuery, (getAllQueryError, getAllQueryResult) => {
-//     if (allQueryError) {
-//       console.log('error', allQueryError);
-//     } else {
-//       console.log(getAllQueryResult.rows);
-//       getAllNotes = getAllQueryResult.rows;
-//     }
-//   });
-//   render('form', { getAllNotes });
-// });
+// 1 /note GET route
+app.get('/note', (request, response) => {
+  response.render('form');
+});
 
-// // 2 /note POST route
+// 2 /note POST route
 
-// app.post('/note', (req, res) => {
-//   // add the data into the database
-//   const { flockSize } = req.body;
-//   const { dateTime } = req.body;
+app.post('/note', (request, response) => {
+  // add the data into the database
+  const { flocksize } = request.body;
+  // eslint-disable-next-line camelcase
+  const { date_time } = request.body;
+  const { behavior } = request.body;
 
-//   const sqlQuery = `INSERT INTO notes (behavior, flock_size, date_time, user_id) VALUES ('${flockSize}', '${dateTime}')`;
+  // eslint-disable-next-line camelcase
+  const sqlQuery = `INSERT INTO notes (behavior, flocksize, date_time) VALUES ('${behavior}','${flocksize}', '${date_time}')`;
 
-//   pool.query(sqlQuery, (error, result) => {
-//     if (error) {
-//       console.log('Error executing query', error.stack);
-//       return;
-//     }
-//     const data = result.rows[0];
-//     data.flockSize = data.flock_size;
-//     data.dateTime = data.date_time;
-//   });
-//   response.render('viewNote', { data });
-// });
+  pool.query(sqlQuery, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+    }
+    console.log(result.rows);
+    response.redirect('/');
+  });
+});
 
 // 3 /note/:id GET route
-// app.get('/note/:id', (req, res) => {
-//   // load the info base on the id
+app.get('/note/:id', (request, response) => {
+  const sqlQuery = 'SELECT notes.id, notes.behavior, notes.flocksize, notes.date_time from notes';
 
-//   response.redirect(`/note/${result.rows[0].id}`);
-// });
+  pool.query(sqlQuery, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      return;
+    }
+    console.log(request.params.id);
+    const data = result.rows[request.params.id];
+    console.log(data);
+
+    response.render('viewNote', { data });
+  });
+});
 
 // 4 / GET route, render a list of sightings
 app.get('/', (request, response) => {
@@ -79,6 +84,18 @@ app.get('/', (request, response) => {
     };
     console.log(data.notes[0].flocksize);
     response.render('index', { data });
+  });
+});
+
+app.delete('/note/:id/delete', (request, response) => {
+  const sqlQuery = `DELETE FROM notes WHERE id=${request.params.id}`;
+
+  pool.query(sqlQuery, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      return;
+    }
+    response.redirect('/');
   });
 });
 
