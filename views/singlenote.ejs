@@ -8,7 +8,26 @@
     <link rel="stylesheet" href="/styles.css" />
     <title>Birding</title>
   </head>
-  <body class="container-fluid">
-    List of notes below
+  <body>
+    <%- include('partials/nav') %>
+    <main class="container-fluid">
+      <h2 class="text-center mt-4">Details of Sighting <%= data.id %></h2>
+      <div>
+        <h3 class="mt-4">Date of Sighting:</h3>
+        <p><%= data.date.toISOString().slice(0,10) %></p>
+      </div>
+      <div>
+        <h3>Time of Sighting</h3>
+        <p><%= data.time %></p>
+      </div>
+      <div>
+        <h3>Day of Sighting</h3>
+        <p><%= data.day %></p>
+      </div>
+      <div>
+        <h3>Behavior Observed</h3>
+        <p><%= data.behavior%></p>
+      </div>
+    </main>
   </body>
 </html>
