@@ -1,0 +1,23 @@
+body {
+  padding-top: 3rem;
+}
+
+a:link,
+a:visited,
+a:active,
+a:hover {
+  color: black;
+  text-decoration: none;
+}
+
+.hidden-submit-button {
+  display: none;
+}
+
+.read-more {
+  text-decoration: none;
+}
+
+.icon-btn:hover {
+  cursor: pointer;
+}

@@ -1,0 +1,32 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand me-0" href="/">Bird Watching</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse ms-2" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a
+          class="nav-link<%= (page === 'new') ? '' : ' active' %>"
+          <%= (page === 'new') ? '' : 'aria-current="page"' %>
+          href="/"
+          >Home</a
+        >
+        <a
+          class="nav-link<%= (page === 'new') ? ' active' : '' %>"
+          <%= (page === 'new') ? 'aria-current="page"' : '' %>
+          href="/note"
+          >New Note</a
+        >
+      </div>
+    </div>
+  </div>
+</nav>
