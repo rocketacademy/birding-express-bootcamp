@@ -50,16 +50,21 @@ app.get('/note', (req, res) => {
 });
 
 /**
- * POST for 'note' page to render a form
+ * POST for 'note' page to get form data
  */
 app.post('/note', (req, res) => {
   // get data from form using req.body
-  const insert = Object.values(req.body);
-  console.log(insert);
+  const formData = Object.values(req.body);
+  const input = formData.map((data) => {
+    // convert all form data to lower case
+    const lower = data.toLowerCase();
+    // convert 1st letter to upper
+    return lower[0].toUpperCase() + lower.slice(1, lower.length);
+  });
   const query =
     'INSERT INTO notes (date, time, day, behavior) VALUES($1, $2, $3, $4) ';
 
-  pool.query(query, insert, (err, result) => {
+  pool.query(query, input, (err, result) => {
     if (err) {
       console.log('Write error: ', err);
       res.status(504).send('Write error, please contact server administrator.');
@@ -73,9 +78,24 @@ app.post('/note', (req, res) => {
  * GET for 'note' page to render a form
  */
 app.get('/note/:id', (req, res) => {
-  const { id } = req.params;
+  const id = Number(req.params.id);
+  // add 1 as SQL starts at index 1
+  const input = [id + 1];
+  console.log(input);
+  const query = 'SELECT * FROM notes WHERE id=$1';
 
-  res.render('singlenote');
+  // get relevant note data from url id
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Error reading data', err);
+      res.status(504).send('Read error, please contact server administrator.');
+    }
+    if (result.rows.length === 0) {
+      res.status(403).send('Sorry, no data found.');
+    }
+    const data = result.rows[0];
+    res.render('singlenote', { data });
+  });
 });
 
 /**
