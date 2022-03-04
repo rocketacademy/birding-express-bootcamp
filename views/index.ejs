@@ -19,17 +19,19 @@
             <th>Date</th>
             <th>Time</th>
             <th>Day</th>
-            <th>Behavior</th>
           </tr>
         </thead>
         <tbody>
           <% for( let i = 0; i < data.length; i++ ) { %>
           <tr>
-            <td>Sighting <%= i + 1%></td>
+            <td>
+              <a class="text-white" href="/note/<%= i %> "
+                >Sighting <%= i + 1%></a
+              >
+            </td>
             <td><%= data[i].date.toISOString().slice(0,10)%></td>
             <td><%= data[i].time %></td>
             <td><%= data[i].day %></td>
-            <td><%= data[i].behavior %></td>
           </tr>
           <% } %>
         </tbody>
