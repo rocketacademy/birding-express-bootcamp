@@ -87,6 +87,59 @@ app.get('/', (request, response) => {
   });
 });
 
+app.get('/signup', (request, response) => {
+  response.render('signup');
+});
+
+app.post('/signup', (request, response) => {
+  const { email, password } = request.body;
+  const insert = [email, password];
+  const query = 'INSERT INTO users (email, password) VALUES($1, $2)';
+  pool.query(query, insert, (err, data) => {
+    if (err) {
+      console.log(`Error:${err}`);
+      response.status(500).send('Write error');
+    }
+    response.send('You have signed up successfully!');
+  });
+});
+
+app.get('/login', (request, response) => {
+  response.render('login');
+});
+
+app.post('/login', (request, response) => {
+  console.log('request came in');
+
+  const values = [request.body.email];
+
+  pool.query('SELECT * from users WHERE email=$1', values, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).send(result.rows);
+      return;
+    }
+
+    if (result.rows.length === 0) {
+      // we didnt find a user with that email.
+      // the error for password and user are the same. don't tell the user which error they got for security reasons, otherwise people can guess if a person is a user of a given service.
+      response.status(403).send('sorry!');
+      return;
+    }
+
+    const user = result.rows[0];
+
+    if (user.password === request.body.password) {
+      response.cookie('loggedIn', true);
+      response.send('logged in!');
+    } else {
+      // password didn't match
+      // the error for password and user are the same. don't tell the user which error they got for security reasons, otherwise people can guess if a person is a user of a given service.
+      response.status(403).send('sorry!');
+    }
+  });
+});
+
 app.delete('/note/:id/delete', (request, response) => {
   const sqlQuery = `DELETE FROM notes WHERE id=${request.params.id}`;
 
