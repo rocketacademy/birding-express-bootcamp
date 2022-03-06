@@ -1,6 +1,7 @@
 import pg from 'pg';
 import methodOverride from 'method-override';
 import express from 'express';
+import jsSHA from 'jssha';
 
 const app = express();
 
@@ -106,13 +107,19 @@ app.post('/login', (request, response) => {
 
     const user = result.rows[0];
 
-    if (user.password === request.body.password) {
+    const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+    // input the password from the request to the SHA object
+    shaObj.update(request.body.password);
+    // get the hashed value as output from the SHA object
+    const hashedPassword = shaObj.getHash('HEX');
+
+    if (user.password === hashedPassword) {
       response.cookie('loggedIn', true);
       response.send(
         "here's the dashboard <form action='logout?_method=delete' method='post'> <input type='submit' value='LOGOUT'/> </form>",
       );
     } else {
-      response.status(403).send('sorry!');
+      response.status(403).send('login failed!');
     }
   });
 });
@@ -123,8 +130,16 @@ app.get('/signup', (request, response) => {
 
 app.post('/signup', (request, response) => {
   const { email, password } = request.body;
-  const insert = [email, password];
-  const query = 'INSERT INTO users (email, password) VALUES($1, $2)';
+
+  // initialise the SHA object
+  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+  // input the password from the request to the SHA object
+  shaObj.update(request.body.password);
+  // get the hashed password as output from the SHA object
+  const hashedPassword = shaObj.getHash('HEX');
+
+  const insert = [email, hashedPassword];
+  const query = 'INSERT INTO users (email, hashedPassword) VALUES($1, $2)';
   pool.query(query, insert, (err, data) => {
     if (err) {
       console.log(`Error:${err}`);
