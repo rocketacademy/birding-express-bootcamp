@@ -87,6 +87,36 @@ app.get('/', (request, response) => {
   });
 });
 
+app.post('/login', (request, response) => {
+  console.log('request came in');
+
+  const values = [request.body.email];
+
+  pool.query('SELECT * from users WHERE email=$1', values, (error, result) => {
+    if (error) {
+      console.log('Error executing query', error.stack);
+      response.status(503).send(result.rows);
+      return;
+    }
+
+    if (result.rows.length === 0) {
+      response.status(403).send('sorry!');
+      return;
+    }
+
+    const user = result.rows[0];
+
+    if (user.password === request.body.password) {
+      response.cookie('loggedIn', true);
+      response.send(
+        "here's the dashboard <form action='logout?_method=delete' method='post'> <input type='submit' value='LOGOUT'/> </form>",
+      );
+    } else {
+      response.status(403).send('sorry!');
+    }
+  });
+});
+
 app.get('/signup', (request, response) => {
   response.render('signup');
 });
@@ -108,36 +138,9 @@ app.get('/login', (request, response) => {
   response.render('login');
 });
 
-app.post('/login', (request, response) => {
-  console.log('request came in');
-
-  const values = [request.body.email];
-
-  pool.query('SELECT * from users WHERE email=$1', values, (error, result) => {
-    if (error) {
-      console.log('Error executing query', error.stack);
-      response.status(503).send(result.rows);
-      return;
-    }
-
-    if (result.rows.length === 0) {
-      // we didnt find a user with that email.
-      // the error for password and user are the same. don't tell the user which error they got for security reasons, otherwise people can guess if a person is a user of a given service.
-      response.status(403).send('sorry!');
-      return;
-    }
-
-    const user = result.rows[0];
-
-    if (user.password === request.body.password) {
-      response.cookie('loggedIn', true);
-      response.send('logged in!');
-    } else {
-      // password didn't match
-      // the error for password and user are the same. don't tell the user which error they got for security reasons, otherwise people can guess if a person is a user of a given service.
-      response.status(403).send('sorry!');
-    }
-  });
+app.delete('/logout', (request, response) => {
+  response.clearCookie('loggedIn');
+  response.send('go back to home');
 });
 
 app.delete('/note/:id/delete', (request, response) => {
