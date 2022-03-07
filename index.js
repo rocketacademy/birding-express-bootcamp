@@ -1,5 +1,7 @@
+/* eslint-disable max-len */
 import express, { urlencoded } from 'express';
 import pg from 'pg';
+import methodOverride from 'method-override';
 
 const pgConnectionConfigs = {
   user: 'kennethongcs',
@@ -14,7 +16,6 @@ const app = express();
 
 // TODO
 // 1. data validation
-// 2. /note/:index page
 
 // to use ejs
 app.set('view engine', 'ejs');
@@ -22,6 +23,8 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 // to use req.body for retrieving form data
 app.use(urlencoded({ extended: false }));
+// to use DEL or PUT
+app.use(methodOverride('_method'));
 
 /**
  * GET for index page
@@ -37,6 +40,10 @@ app.get('/', (req, res) => {
     }
     // logic for result below
     const data = result.rows; // returns an array of obj
+    // sort sighting according to asc order
+    data.sort((a, b) => {
+      return a.id - b.id;
+    });
     res.render('index', { data });
   });
 });
@@ -79,9 +86,7 @@ app.post('/note', (req, res) => {
  */
 app.get('/note/:id', (req, res) => {
   const id = Number(req.params.id);
-  // add 1 as SQL starts at index 1
-  const input = [id + 1];
-  console.log(input);
+  const input = [id];
   const query = 'SELECT * FROM notes WHERE id=$1';
 
   // get relevant note data from url id
@@ -99,7 +104,51 @@ app.get('/note/:id', (req, res) => {
 });
 
 /**
- * POST for 'note' page to recieve form data
+ * GET for 'note/edit' page to edit data
  */
+app.get('/note/:id/edit', (req, res) => {
+  const id = Number(req.params.id);
+  const input = [id];
+  const query = 'SELECT * FROM notes WHERE id=$1';
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Get error:', err);
+      res.status(504).send('Get error.');
+    }
+    if (result.rows.length === 0) {
+      res.status(404).send('No data found.');
+    }
+    const data = result.rows[0];
+    res.render('singleEdit', { data });
+  });
+});
+
+/**
+ * PUT for 'note/edit' page to edit data
+ */
+app.put('/note/:id/', (req, res) => {
+  const id = Number(req.params.id);
+  const input = [
+    req.body.date,
+    req.body.time,
+    req.body.day,
+    req.body.behavior,
+    req.body.flocksize,
+    id,
+  ];
+  const query =
+    'UPDATE notes SET date=$1, time=$2, day=$3, behavior=$4, flocksize=$5 WHERE id=$6';
+
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Put error:', err);
+      res.status(504).send('Put error.');
+    } else {
+      // console.log(result.rows);
+      console.log('Successfully updated data.');
+      res.status(200).redirect('/');
+    }
+  });
+});
 
 app.listen(3004);
