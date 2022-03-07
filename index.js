@@ -23,19 +23,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 app.use(cookieParser());
 
+app.use((req, res, next) => {
+  res.locals.user = req.cookies.user;
+  next();
+});
+
 app.set('view engine', 'ejs');
 
 moment().format();
 moment.suppressDeprecationWarnings = true;
-
-/**
- * Get new note form.
- * @param {Object} req Request object.
- * @param {Object} res Response object.
- */
-const getNewNote = (req, res) => {
-  res.render('edit', { source: 'new' });
-};
 
 /**
  * Check if note data is valid.
@@ -44,6 +40,26 @@ const getNewNote = (req, res) => {
  */
 // eslint-disable-next-line no-restricted-globals, max-len
 const isNoteDataValid = (data) => moment(data.date).isValid() && moment(data.date).isSameOrBefore(moment()) && !isNaN(data.flockSize);
+
+/**
+ * Check if user is logged in.
+ * @returns True, if logged in. False, otherwise.
+ */
+const isLoggedIn = (req) => (req.cookies && req.cookies.user);
+
+/**
+ * Get new note form.
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ */
+const getNewNote = (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.redirect('/login');
+    return;
+  }
+
+  res.render('edit', { source: 'new' });
+};
 
 /**
  * Add new note.
@@ -64,7 +80,7 @@ const createNote = (req, res) => {
 
   const query = 'insert into notes (habitat, date, appearance, behavior, vocalisations, flock_size, user_id) values ($1, $2, $3, $4, $5, $6, $7) returning id';
   const inputData = [
-    habitat, date, appearance, behavior, vocalisations, flockSize, req.cookies.userId];
+    habitat, date, appearance, behavior, vocalisations, flockSize, req.cookies.user.id];
 
   pool.query(query, inputData, (err, result) => {
     if (err) {
@@ -121,6 +137,11 @@ const getNotes = (req, res) => {
  * @returns Edit note page.
  */
 const getEditNote = (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.redirect('/login');
+    return;
+  }
+
   const { id } = req.params;
 
   // eslint-disable-next-line no-restricted-globals
@@ -211,9 +232,9 @@ const getNoteByID = (req, res) => {
     }
 
     const note = result.rows[0];
-    note.date = moment(note.date).format('dddd, MMMM D, YYYY');
 
     if (note) {
+      note.date = moment(note.date).format('dddd, MMMM D, YYYY');
       res.render('note', { note, source: `note-${id}` });
     } else {
       res.status(404).send('Sorry, we cannot find that!');
@@ -246,7 +267,7 @@ const deleteNoteByID = (req, res) => {
       return;
     }
 
-    res.redirect('/');
+    res.redirect(`/users/${req.cookies.user.id}`);
   });
 };
 
@@ -320,7 +341,7 @@ const logUserIn = (req, res) => {
     const user = result.rows[0];
 
     if (user.password === getHashValue(req.body.password)) {
-      res.cookie('userId', user.id);
+      res.cookie('user', { id: user.id, email: user.email });
       res.redirect('/');
     } else {
       // password didn't match
@@ -336,8 +357,8 @@ const logUserIn = (req, res) => {
  * @returns Redirection to login page.
  */
 const logUserOut = (req, res) => {
-  res.clearCookie('userId');
-  res.redirect('/login');
+  res.clearCookie('user');
+  res.redirect('/');
 };
 
 /**
@@ -346,11 +367,22 @@ const logUserOut = (req, res) => {
  * @param {Object} res Response object.
  */
 const getUserNotesByID = (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.redirect('/login');
+    return;
+  }
+
   const { id } = req.params;
 
   // eslint-disable-next-line no-restricted-globals
   if (isNaN(id)) {
     res.status(404).send('Sorry, we cannot find that!');
+    return;
+  }
+
+  // if requested id is not own id, then redirect to own users page
+  if (req.cookies.user.id !== Number(id)) {
+    res.redirect(`/users/${req.cookies.user.id}`);
     return;
   }
 
@@ -376,13 +408,9 @@ const getUserNotesByID = (req, res) => {
       note.date = moment(note.date).format('dddd, MMMM D, YYYY');
     });
 
-    if (notes.length > 0) {
-      res.render('users', {
-        notes, source: 'root', sortBy, sortOrder,
-      });
-    } else {
-      res.status(404).send('Sorry, we cannot find that!');
-    }
+    res.render('users', {
+      notes, source: 'users', sortBy, sortOrder,
+    });
   });
 };
 
@@ -397,7 +425,7 @@ app.delete('/note/:id', deleteNoteByID);
 app.post('/signup', createUser);
 app.get('/login', getUserLogin);
 app.post('/login', logUserIn);
-app.delete('/note/:id', logUserOut);
+app.delete('/logout', logUserOut);
 app.get('/users/:id', getUserNotesByID);
 
 // start the server listening for requests
