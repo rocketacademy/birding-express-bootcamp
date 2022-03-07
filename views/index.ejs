@@ -19,19 +19,25 @@
             <th>Date</th>
             <th>Time</th>
             <th>Day</th>
+            <th>Other Functions</th>
           </tr>
         </thead>
         <tbody>
           <% for( let i = 0; i < data.length; i++ ) { %>
           <tr>
             <td>
-              <a class="text-white" href="/note/<%= i %> "
-                >Sighting <%= i + 1%></a
+              <a class="text-white" href="/note/<%= data[i].id %> "
+                >Sighting <%= data[i].id%></a
               >
             </td>
             <td><%= data[i].date.toISOString().slice(0,10)%></td>
             <td><%= data[i].time %></td>
             <td><%= data[i].day %></td>
+            <td>
+              <form class="button-tile" action="/note/<%= data[i].id %>/edit">
+                <input type="submit" value="Edit" />
+              </form>
+            </td>
           </tr>
           <% } %>
         </tbody>
