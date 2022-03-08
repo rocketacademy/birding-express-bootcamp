@@ -41,9 +41,18 @@ app.get('/', (req, res) => {
     // logic for result below
     const data = result.rows; // returns an array of obj
     // sort sighting according to asc order
-    data.sort((a, b) => {
-      return a.id - b.id;
-    });
+    // console.log(data);
+    const sortQuery = req.query.sort;
+    // BUG sorting by date / time (integers does not work)
+    if (sortQuery) {
+      data.sort((a, b) => {
+        return a.day > b.day ? 1 : -1;
+      });
+    } else {
+      data.sort((a, b) => {
+        return a.id - b.id;
+      });
+    }
     res.render('index', { data });
   });
 });
@@ -53,7 +62,16 @@ app.get('/', (req, res) => {
  */
 app.get('/note', (req, res) => {
   // add query to db to get data
-  res.render('form');
+  const query = 'SELECT * FROM species';
+  // get list of species and send to form.ejs
+  pool.query(query, (err, result) => {
+    if (err) {
+      console.log('DB read error: ', err);
+      res.status(404).send('Read Error.');
+    }
+    const data = result.rows;
+    res.render('form', { data });
+  });
 });
 
 /**
@@ -69,7 +87,7 @@ app.post('/note', (req, res) => {
     return lower[0].toUpperCase() + lower.slice(1, lower.length);
   });
   const query =
-    'INSERT INTO notes (date, time, day, behavior) VALUES($1, $2, $3, $4) ';
+    'INSERT INTO notes (date, time, day, species_id, flocksize, behavior) VALUES($1, $2, $3, $4, $5, $6) ';
 
   pool.query(query, input, (err, result) => {
     if (err) {
@@ -78,7 +96,9 @@ app.post('/note', (req, res) => {
     }
     console.log(result.rows);
   });
-  res.send('Thanks for your submission.');
+  res.send(
+    'Thanks for your submission. Click <a href="/">here</a> to head back to the homepage'
+  );
 });
 
 /**
@@ -123,6 +143,26 @@ app.get('/note/:id/edit', (req, res) => {
   });
 });
 
+// BUG how to get the list of categories in the single edit ejs
+// app.get('/note/:id/edit', (req, res) => {
+//   const id = Number(req.params.id);
+//   const input = [];
+//   const query =
+//     'select notes.id, notes.date, notes.time, notes.day, notes.behavior, notes.flocksize, notes.species_id, species.id AS species_table_id, species.name FROM notes INNER JOIN species ON notes.species_id = species.id;';
+//   pool.query(query, input, (err, result) => {
+//     if (err) {
+//       console.log('Get error:', err);
+//       res.status(504).send('Get error.');
+//     }
+//     if (result.rows.length === 0) {
+//       res.status(404).send('No data found.');
+//     }
+//     const data = result.rows;
+//     console.log(data);
+//     res.render('singleEdit', { data, id });
+//   });
+// });
+
 /**
  * PUT for 'note/edit' page to edit data
  */
@@ -143,11 +183,29 @@ app.put('/note/:id/', (req, res) => {
     if (err) {
       console.log('Put error:', err);
       res.status(504).send('Put error.');
-    } else {
-      // console.log(result.rows);
-      console.log('Successfully updated data.');
-      res.status(200).redirect('/');
+      return;
     }
+    // console.log(result.rows);
+    console.log('Successfully updated data.');
+    res.status(200).redirect('/');
+  });
+});
+
+/**
+ * DEL for '/delete'
+ */
+app.delete('/note/:id', (req, res) => {
+  const { id } = req.params;
+  const input = [id];
+  const query = 'DELETE FROM notes WHERE id = $1';
+
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Delete error:', err);
+      res.send(504).send('Delete error.');
+      return;
+    }
+    console.log('Successfully deleted');
   });
 });
 
