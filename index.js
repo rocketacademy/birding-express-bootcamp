@@ -161,6 +161,13 @@ const getEditNote = (req, res) => {
     }
 
     const note = result.rows[0];
+
+    // if requested note is not created by logged in user, then redirect to home page
+    if (req.cookies.user.id !== note.user_id) {
+      res.redirect('/');
+      return;
+    }
+
     note.date = moment(note.date).format('dddd, MMMM D, YYYY');
 
     res.render('edit', { note, source: 'edit' });
