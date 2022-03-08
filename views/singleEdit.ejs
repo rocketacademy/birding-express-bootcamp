@@ -29,6 +29,7 @@
               value="<%= data.date %>"
             />
           </div>
+          <a href=""></a>
           <div class="form-group">
             <label for="time">Time:</label>
             <input
@@ -39,11 +40,12 @@
               value="<%= data.time %>"
             />
           </div>
-          <div>
-            <label for="day">Day: (previously entered: <%= data.day %>)</label
-            ><br />
-            <select name="day" id="day">
-              <option value="monday">Monday</option>
+          <div class="form-group">
+            <label for="day">Day:</label><br />
+            <select class="form-control" name="day" id="day">
+              <!-- add previously selected value -->
+              <option selected="<%= data.day %> "><%= data.day %></option>
+              <option value="tuesday">Monday</option>
               <option value="tuesday">Tuesday</option>
               <option value="wednesday">Wednesday</option>
               <option value="thursday">Thursday</option>
@@ -51,6 +53,17 @@
               <option value="saturday">Saturday</option>
               <option value="sunday">Sunday</option>
             </select>
+          </div>
+          <!-- BUG how to foreach another database -->
+          <div>
+            <label for="flocksize">Flocksize:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="flocksize"
+              name="flocksize"
+              value="<%=data.flocksize%>"
+            />
           </div>
           <div class="form-group mt-3">
             <label for="behavior">Behavior:</label>
@@ -61,17 +74,6 @@
               name="behavior"
               value="<%=data.behavior%>"
             />
-          </div>
-          <div>
-            <label for="flocksize">Flocksize:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="flocksize"
-              name="flocksize"
-              value="<%=data.flocksize%>"
-            />
-            <br />
           </div>
           <input type="submit" value="Submit" />
           <input type="reset" value="Reset" />
