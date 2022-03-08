@@ -12,6 +12,17 @@
     <%- include('partials/nav') %>
     <main class="container-fluid">
       <h2 class="text-center mt-4">List of notes below</h2>
+      <div class="text-center">
+        Sorting By:
+        <form action="/">
+          <select name="sort">
+            <option value="date">Date</option>
+            <option value="time">Time</option>
+            <option value="day">Day</option>
+          </select>
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
       <table class="table table-hover table-bordered mt-4">
         <thead>
           <tr>
@@ -27,15 +38,27 @@
           <tr>
             <td>
               <a class="text-white" href="/note/<%= data[i].id %> "
-                >Sighting <%= data[i].id%></a
+                >Sighting <%= i + 1%></a
               >
             </td>
             <td><%= data[i].date.toISOString().slice(0,10)%></td>
             <td><%= data[i].time %></td>
             <td><%= data[i].day %></td>
             <td>
-              <form class="button-tile" action="/note/<%= data[i].id %>/edit">
+              <form
+                class="button-tile"
+                style="display: inline-block"
+                action="/note/<%= data[i].id %>/edit"
+              >
                 <input type="submit" value="Edit" />
+              </form>
+              <form
+                class="button-tile"
+                style="display: inline-block"
+                action="/note/<%= data[i].id %>?_method=DELETE"
+                method="POST"
+              >
+                <input type="submit" value="Delete" />
               </form>
             </td>
           </tr>
