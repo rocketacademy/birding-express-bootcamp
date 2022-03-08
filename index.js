@@ -17,6 +17,7 @@ const app = express();
 
 // TODO
 // 1. data validation
+// 2. species index / index edit / index del
 
 // to use ejs
 app.set('view engine', 'ejs');
