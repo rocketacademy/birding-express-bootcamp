@@ -1,3 +1,4 @@
+/* eslint-disable spaced-comment */
 /* eslint-disable max-len */
 import express, { urlencoded } from 'express';
 import pg from 'pg';
@@ -209,4 +210,55 @@ app.delete('/note/:id', (req, res) => {
   });
 });
 
+/////////////
+// SPECIES //
+/////////////
+/**
+ * Get for species to render a form
+ */
+app.get('/species', (req, res) => {
+  res.render('speciesGET');
+});
+
+/**
+ * POST for species to add form data to DB
+ */
+app.post('/species', (req, res) => {
+  // convert obj to array
+  const data = Object.values(req.body);
+  // convert form data to lower case
+  const input = data.map((x) => {
+    return x.toLowerCase();
+  });
+  const query = 'INSERT INTO species (name, scientific_name) VALUES ($1, $2)';
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Write error:', err);
+      res.status(504).send('Write error');
+    }
+    console.log('Write Successful');
+    res.send(
+      'Write Successful, click <a href="/">here</a> to head back to the homepage'
+    );
+  });
+});
+
+/**
+ * GET for list of species
+ */
+app.get('/species/all', (req, res) => {
+  const query = 'SELECT * FROM species';
+  pool.query(query, (err, result) => {
+    if (err) {
+      console.log('Read error:', err);
+      res.status(504).send('Read error');
+    }
+    if (result.rows.length === 0) {
+      console.log('No data');
+      return;
+    }
+    const data = result.rows;
+    res.render('speciesAll', { data });
+  });
+});
 app.listen(3004);
