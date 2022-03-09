@@ -48,17 +48,34 @@ const isNoteDataValid = (data) => moment(data.date).isValid() && moment(data.dat
 const isLoggedIn = (req) => (req.cookies && req.cookies.user);
 
 /**
+ * Get list of species.
+ */
+const getSpecies = async () => {
+  const query = 'select id, name, scientific_name from species order by name';
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (err) {
+    console.log('Error executing query', err.stack);
+    return null;
+  }
+};
+
+/**
  * Get new note form.
  * @param {Object} req Request object.
  * @param {Object} res Response object.
  */
-const getNewNote = (req, res) => {
+const getNewNote = async (req, res) => {
   if (!isLoggedIn(req)) {
     res.redirect('/login');
     return;
   }
 
-  res.render('edit', { source: 'new' });
+  const species = await getSpecies();
+
+  res.render('edit', { source: 'new', species });
 };
 
 /**
@@ -69,7 +86,7 @@ const getNewNote = (req, res) => {
  */
 const createNote = (req, res) => {
   const {
-    habitat, date, appearance, behavior, vocalisations, flockSize,
+    habitat, date, appearance, behavior, vocalisations, flockSize, species,
   } = req.body;
 
   // validate note data
@@ -78,9 +95,10 @@ const createNote = (req, res) => {
     return;
   }
 
-  const query = 'insert into notes (habitat, date, appearance, behavior, vocalisations, flock_size, user_id) values ($1, $2, $3, $4, $5, $6, $7) returning id';
+  const query = 'insert into notes (habitat, date, appearance, behavior, vocalisations, flock_size, user_id, species_id) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id';
   const inputData = [
-    habitat, date, appearance, behavior, vocalisations, flockSize, req.cookies.user.id];
+    // eslint-disable-next-line max-len
+    habitat, date, appearance, behavior, vocalisations, flockSize, req.cookies.user.id, (species) || null];
 
   pool.query(query, inputData, (err, result) => {
     if (err) {
@@ -99,7 +117,7 @@ const createNote = (req, res) => {
  * @param {Object} res Response object.
  */
 const getNotes = (req, res) => {
-  const query = 'select n.*, u.email from notes n left join users u on n.user_id=u.id';
+  const query = 'select n.*, u.email, s.name as species_name, s.scientific_name as species_scientific_name from notes n left join users u on n.user_id=u.id left join species s on n.species_id=s.id';
 
   pool.query(query, (err, result) => {
     if (err) {
@@ -153,7 +171,7 @@ const getEditNote = (req, res) => {
   const query = 'select * from notes where id=$1';
   const inputData = [id];
 
-  pool.query(query, inputData, (err, result) => {
+  pool.query(query, inputData, async (err, result) => {
     if (err) {
       console.log('Error executing query', err.stack);
       res.status(503).send(result.rows);
@@ -170,7 +188,9 @@ const getEditNote = (req, res) => {
 
     note.date = moment(note.date).format('dddd, MMMM D, YYYY');
 
-    res.render('edit', { note, source: 'edit' });
+    const species = await getSpecies();
+
+    res.render('edit', { note, source: 'edit', species });
   });
 };
 
@@ -190,7 +210,7 @@ const editNote = (req, res) => {
   }
 
   const {
-    habitat, date, appearance, behavior, vocalisations, flockSize,
+    habitat, date, appearance, behavior, vocalisations, flockSize, species,
   } = req.body;
 
   // validate note data
@@ -199,8 +219,10 @@ const editNote = (req, res) => {
     return;
   }
 
-  const query = 'update notes set habitat=$1, date=$2, appearance=$3, behavior=$4, vocalisations=$5, flock_size=$6 where id=$7';
-  const inputData = [habitat, date, appearance, behavior, vocalisations, flockSize, id];
+  const query = 'update notes set habitat=$1, date=$2, appearance=$3, behavior=$4, vocalisations=$5, flock_size=$6, species_id=$7 where id=$8';
+
+  // eslint-disable-next-line max-len
+  const inputData = [habitat, date, appearance, behavior, vocalisations, flockSize, (species) || null, id];
 
   pool.query(query, inputData, (err, result) => {
     if (err) {
@@ -228,7 +250,7 @@ const getNoteByID = (req, res) => {
     return;
   }
 
-  const query = 'select n.*, u.email from notes n left join users u on n.user_id=u.id where n.id=$1';
+  const query = 'select n.*, u.email, s.name as species_name, s.scientific_name as species_scientific_name from notes n left join users u on n.user_id=u.id left join species s on n.species_id=s.id where n.id=$1';
   const inputData = [id];
 
   pool.query(query, inputData, (err, result) => {
@@ -393,7 +415,7 @@ const getUserNotesByID = (req, res) => {
     return;
   }
 
-  const query = 'select n.*, u.email from notes n left join users u on n.user_id=u.id where n.user_id=$1';
+  const query = 'select n.*, u.email, s.name as species_name, s.scientific_name as species_scientific_name from notes n left join users u on n.user_id=u.id left join species s on n.species_id=s.id where n.user_id=$1';
   const inputData = [id];
 
   pool.query(query, inputData, (err, result) => {

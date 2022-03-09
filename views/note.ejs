@@ -58,6 +58,14 @@
                       <small>Flock size: <%= note.flock_size %></small>
                     </div>
                     <div class="col-12">
+                      <small
+                        >Species: <%= note.species_name %> <% if
+                        (note.species_name) { %>(<span class="fst-italic"
+                          ><%= note.species_scientific_name %></span
+                        >)<% }%></small
+                      >
+                    </div>
+                    <div class="col-12">
                       <small>Created By: <%= note.email %></small>
                     </div>
                   </div>

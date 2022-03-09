@@ -23,7 +23,18 @@
               required
             />
           </div>
-          <div class="mb-3 col-sm-6">
+          <div class="mb-3 col-sm-3">
+            <label for="flockSize" class="form-label">Flock Size:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="flockSize"
+              name="flockSize"
+              value="<%= (source === 'edit') ? note.flock_size : '' %>"
+              required
+            />
+          </div>
+          <div class="mb-3 col-sm-3">
             <label for="date" class="form-label">Date:</label>
             <div class="input-group">
               <input
@@ -78,15 +89,13 @@
             />
           </div>
           <div class="mb-3 col-sm-6">
-            <label for="flockSize" class="form-label">Flock Size:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="flockSize"
-              name="flockSize"
-              value="<%= (source === 'edit') ? note.flock_size : '' %>"
-              required
-            />
+            <label for="species" class="form-label">Species:</label>
+            <select name="species" id="species" class="form-control">
+              <option value=""></option>
+              <% species.forEach((spec) => { %>
+              <option value="<%= spec.id %>" <%= ((source === 'edit') && (spec.id === note.species_id)) ? 'selected' : '' %>><%= spec.name %> (<%= spec.scientific_name %>)</option>
+              <% }); %>
+            </select>
           </div>
         </div>
         <input type="submit" class="btn btn-secondary" value="Submit" />
