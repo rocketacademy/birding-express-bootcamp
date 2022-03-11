@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import moment from 'moment';
-import pool from '../dbConnect.js';
-import { compare } from '../compare.js';
+import pool from '../utils/dbConnect.js';
+import { compare } from '../utils/compare.js';
 
 const router = Router();
 

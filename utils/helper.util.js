@@ -1,5 +1,5 @@
 import jsSHA from 'jssha';
-import pool from '../dbConnect.js';
+import pool from './dbConnect.js';
 
 /**
  * Get hash value of a text.

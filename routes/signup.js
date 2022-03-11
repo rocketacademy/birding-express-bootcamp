@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import pool from '../dbConnect.js';
+import pool from '../utils/dbConnect.js';
 import { getHashValue } from '../utils/helper.util.js';
 
 const router = Router();

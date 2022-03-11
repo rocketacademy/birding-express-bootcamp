@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import moment from 'moment';
-import pool from '../dbConnect.js';
+import pool from '../utils/dbConnect.js';
 import { isLoggedIn, getSpecies } from '../utils/helper.util.js';
 
 const router = Router();
