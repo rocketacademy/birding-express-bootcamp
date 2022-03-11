@@ -1,3 +1,6 @@
+/* eslint-disable comma-dangle */
+/* eslint-disable operator-linebreak */
+/* eslint-disable arrow-body-style */
 /* eslint-disable spaced-comment */
 /* eslint-disable max-len */
 import express, { urlencoded } from 'express';
@@ -407,3 +410,76 @@ app.get('/species/all', (req, res) => {
   });
 });
 app.listen(3004);
+
+/**
+ * GET to render a single species that lists all notes with the particular species
+ */
+app.get('/species/:id', (req, res) => {
+  const { id } = req.params;
+  const input = [id];
+  const speciesQuery = 'SELECT * FROM notes WHERE species_id = $1';
+  pool.query(speciesQuery, input, (err, result) => {
+    if (err) {
+      console.log('Read error', err);
+      res.status(504).send('Read error.');
+      return;
+    }
+    const data = result.rows;
+    res.render('speciesSingleGET', { data });
+  });
+});
+
+/**
+ * GET to render edit form for single species
+ */
+app.get('/species/:id/edit', (req, res) => {
+  const { id } = req.params;
+  const input = [id];
+  const query = 'SELECT * FROM species WHERE id = $1';
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Read error', err);
+      res.status(504).send('Read error.');
+      return;
+    }
+    const data = result.rows[0];
+    res.render('speciesEditSingle', { data });
+  });
+});
+
+/**
+ * PUT to edit a single species
+ */
+app.put('/species/:id/edit', (req, res) => {
+  const { id } = req.params;
+  const input = [req.body.name, req.body.scientific_name, id];
+  const query =
+    'UPDATE species SET name=$1, scientific_name = $2 WHERE id = $3 ';
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Write error', err);
+      res.status(504).send('Write error.');
+      return;
+    }
+    console.log('Updated successfully!');
+    res.redirect('/species/all');
+  });
+});
+
+/**
+ * DEL to del a species
+ */
+app.delete('/species/:id/delete', (req, res) => {
+  const { id } = req.params;
+  const input = [id];
+  const query = 'DELETE FROM species WHERE id = $1';
+  pool.query(query, input, (err, result) => {
+    if (err) {
+      console.log('Delete error', err);
+      res.status(504).send('Delete error.');
+      return;
+    }
+    console.log('Successfully deleted');
+    res.redirect('/species/all');
+  });
+});
