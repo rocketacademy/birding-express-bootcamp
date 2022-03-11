@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('header'); -%>
+  <body>
+    <%- include('navigation', { page: source }); -%>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col ms-3 mt-3">
+          <h2>Bird Species</h2>
+        </div>
+        <div class="col text-end me-4 mt-3 ps-0 pe-0">
+          <span class="fs-6">Sort: </span>
+          <span>
+            <a
+              href="?sortBy=name<%= ((sortBy === 'name') && (sortOrder === 'asc')) ? '&sortOrder=desc' : '&sortOrder=asc' %>"
+              ><small>Name</small> <% if ((sortBy === 'name') && (sortOrder ===
+              'asc')) { %>↑<% } else if ((sortBy === 'name') && (sortOrder ===
+              'desc')) { %>↓<% }%>
+            </a>
+            |
+            <a
+              href="?sortBy=scientific_name<%= ((sortBy === 'scientific_name') && (sortOrder === 'asc')) ? '&sortOrder=desc' : '&sortOrder=asc' %>"
+              ><small>Scientific Name</small> <% if ((sortBy === 'scientific_name')
+              && (sortOrder === 'asc')) { %>↑<% } else if ((sortBy ===
+              'scientific_name') && (sortOrder === 'desc')) { %>↓<% }%>
+            </a></span
+          >
+        </div>
+      </div>
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4">
+        <% species.forEach((spec) => { %>
+        <div class="col">
+          <div class="card border-dark mb-3" style="max-width: 24rem">
+            <div class="card-header bg-transparent border-dark">
+              <div class="row">
+                <div class="col-12">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-calendar-event"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"
+                    />
+                    <path
+                      d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
+                    />
+                  </svg>
+                  <small><%= spec.name %></small>
+                </div>
+              </div>
+            </div>
+            <div
+              class="card-body text-secondary pt-0"
+              style="transform: rotate(0)"
+            >
+              <p class="card-text">
+                <div class="row">
+                  <div class="col-12">
+                    <small><%= spec.scientific_name %></small>
+                  </div>
+                </div>
+              </p>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </body>
+</html>
