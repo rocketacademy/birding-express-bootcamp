@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import pool from '../dbConnect.js';
-import { compare } from '../compare.js';
+import pool from '../utils/dbConnect.js';
+import { compare } from '../utils/compare.js';
 
 const router = Router();
 
