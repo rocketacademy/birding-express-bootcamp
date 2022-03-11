@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('partials/bootstrap')%>
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Birding</title>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+    <main class="container-fluid">
+      <h2 class="text-center mt-4">Details of Sighting <%= data.id %></h2>
+      <% data.forEach(element => { %>
+      <div>
+        <h3 class="mt-4">Date of Sighting:</h3>
+        <p><%= element.date.toISOString().slice(0,10) %></p>
+      </div>
+      <div>
+        <h3>Time of Sighting</h3>
+        <p><%= element.time %></p>
+      </div>
+      <div>
+        <h3>Day of Sighting</h3>
+        <p><%= element.day %></p>
+      </div>
+      <div>
+        <h3>Flock Size</h3>
+        <p><%= element.flocksize%></p>
+      </div>
+      <div>
+        <h3>Species</h3>
+        <p><%= element.species_id%></p>
+      </div>
+      <div>
+        <h3>Behavior Observed</h3>
+        <p><%= element.behavior%></p>
+      </div>
+      <hr />
+      <% }) %>
+    </main>
+  </body>
+</html>
