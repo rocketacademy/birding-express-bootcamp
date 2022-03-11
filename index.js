@@ -3,6 +3,7 @@
 import express, { urlencoded } from 'express';
 import pg from 'pg';
 import methodOverride from 'method-override';
+import cookieParser from 'cookie-parser';
 
 const pgConnectionConfigs = {
   user: 'kennethongcs',
@@ -27,6 +28,8 @@ app.use(express.static('public'));
 app.use(urlencoded({ extended: false }));
 // to use DEL or PUT
 app.use(methodOverride('_method'));
+// to parse cooking string from req into an obj
+app.use(cookieParser());
 
 /**
  * GET for index page
@@ -63,6 +66,11 @@ app.get('/', (req, res) => {
  * GET for 'note' page to render a form
  */
 app.get('/note', (req, res) => {
+  // check if user is logged in
+  if (req.cookies.userId === undefined) {
+    res.status(403).redirect('/login');
+    return;
+  }
   // add query to db to get data
   const query = 'SELECT * FROM species';
   // get list of species and send to form.ejs
@@ -70,6 +78,7 @@ app.get('/note', (req, res) => {
     if (err) {
       console.log('DB read error: ', err);
       res.status(404).send('Read Error.');
+      return;
     }
     const data = result.rows;
     res.render('form', { data });
@@ -82,19 +91,24 @@ app.get('/note', (req, res) => {
 app.post('/note', (req, res) => {
   // get data from form using req.body
   const formData = Object.values(req.body);
+  // retrieve userId from cookie
+  const { userId } = req.cookies;
   const input = formData.map((data) => {
     // convert all form data to lower case
     const lower = data.toLowerCase();
     // convert 1st letter to upper
     return lower[0].toUpperCase() + lower.slice(1, lower.length);
   });
+  // add userId into input
+  input.push(userId);
   const query =
-    'INSERT INTO notes (date, time, day, species_id, flocksize, behavior) VALUES($1, $2, $3, $4, $5, $6) ';
+    'INSERT INTO notes (date, time, day, species_id, flocksize, behavior, user_created) VALUES($1, $2, $3, $4, $5, $6, $7) ';
 
   pool.query(query, input, (err, result) => {
     if (err) {
       console.log('Write error: ', err);
       res.status(504).send('Write error, please contact server administrator.');
+      return;
     }
     console.log(result.rows);
   });
@@ -121,49 +135,65 @@ app.get('/note/:id', (req, res) => {
       res.status(403).send('Sorry, no data found.');
     }
     const data = result.rows[0];
-    res.render('singlenote', { data });
+
+    // 2nd query to get user email from another table
+    const input2 = [data.user_created];
+    const query2 = 'SELECT * FROM users WHERE id=$1';
+    pool.query(query2, input2, (err, result) => {
+      if (err) {
+        console.log('Read error query 2', err);
+        res.status(504).send('Server error.');
+      }
+      const user = result.rows[0];
+      res.render('singlenote', { data, user });
+    });
   });
 });
 
 /**
- * GET for 'note/edit' page to edit data
+ * GET for 'note/edit' page to edit data DOING
  */
 app.get('/note/:id/edit', (req, res) => {
-  const id = Number(req.params.id);
-  const input = [id];
-  const query = 'SELECT * FROM notes WHERE id=$1';
-  pool.query(query, input, (err, result) => {
-    if (err) {
-      console.log('Get error:', err);
-      res.status(504).send('Get error.');
-    }
-    if (result.rows.length === 0) {
-      res.status(404).send('No data found.');
-    }
-    const data = result.rows[0];
-    res.render('singleEdit', { data });
-  });
+  // redirect to main page if user is not logged in
+  if (!req.cookies.userId) {
+    res.redirect('/');
+  } else {
+    // retrieve current userId
+    const userInsert = [req.cookies.userId];
+    // check against his created forms
+    const userQuery = 'SELECT * FROM notes WHERE user_created=$1';
+    pool.query(userQuery, userInsert, (err, result) => {
+      if (err) {
+        console.log('User read error', err);
+        res.status(504).send('User read error.');
+      }
+      // add edit button only for his created forms
+      const usersCreatedFormId = result.rows.map((user) => {
+        return user.id;
+      });
+      const id = Number(req.params.id);
+      const input = [id];
+      // check if user created form is same as what user clicked in GET
+      if (usersCreatedFormId.indexOf(id) !== -1) {
+        const query = 'SELECT * FROM notes WHERE id=$1';
+        pool.query(query, input, (err, result) => {
+          if (err) {
+            console.log('Get error:', err);
+            res.status(504).send('Get error.');
+            return;
+          }
+          if (result.rows.length === 0) {
+            res.status(404).send('No data found.');
+          }
+          const data = result.rows[0];
+          res.render('singleEdit', { data });
+        });
+      } else {
+        res.redirect('/');
+      }
+    });
+  }
 });
-
-// BUG how to get the list of categories in the single edit ejs
-// app.get('/note/:id/edit', (req, res) => {
-//   const id = Number(req.params.id);
-//   const input = [];
-//   const query =
-//     'select notes.id, notes.date, notes.time, notes.day, notes.behavior, notes.flocksize, notes.species_id, species.id AS species_table_id, species.name FROM notes INNER JOIN species ON notes.species_id = species.id;';
-//   pool.query(query, input, (err, result) => {
-//     if (err) {
-//       console.log('Get error:', err);
-//       res.status(504).send('Get error.');
-//     }
-//     if (result.rows.length === 0) {
-//       res.status(404).send('No data found.');
-//     }
-//     const data = result.rows;
-//     console.log(data);
-//     res.render('singleEdit', { data, id });
-//   });
-// });
 
 /**
  * PUT for 'note/edit' page to edit data
@@ -204,11 +234,123 @@ app.delete('/note/:id', (req, res) => {
   pool.query(query, input, (err, result) => {
     if (err) {
       console.log('Delete error:', err);
-      res.send(504).send('Delete error.');
+      res.status(504).send('Delete error.');
       return;
     }
     console.log('Successfully deleted');
+    res.render('/');
   });
+});
+
+/**
+ * GET for user own list of notes
+ */
+app.get('/users/', (req, res) => {
+  if (!req.cookies.userId) {
+    res.redirect('/login');
+  } else {
+    const { userId } = req.cookies;
+    const input = [userId];
+    const query = 'SELECT * FROM notes WHERE user_created = $1';
+    pool.query(query, input, (err, result) => {
+      if (err) {
+        console.log('DB retrieval error', err);
+        res.status(504).send('DB retrieval error');
+        return;
+      }
+      const data = result.rows;
+      // console.log(data);
+      res.render('singleUserGET', { data });
+    });
+  }
+});
+
+/////////////
+// Signup ///
+/////////////
+/**
+ * GET for signup to render a form
+ */
+app.get('/signup', (req, res) => {
+  res.render('signupGET');
+});
+
+/**
+ * POST to add user credentials to DB
+ */
+app.post('/signup', (req, res) => {
+  const data = req.body;
+  // change email to lower case
+  data.email.toLowerCase();
+  const insert = Object.values(data);
+  const query = 'INSERT INTO users (email, password) VALUES ($1, $2)';
+  pool.query(query, insert, (err, results) => {
+    if (err) {
+      console.log('Write error:', err);
+      res.status(504).send('Write error');
+      return;
+    }
+    console.log('User added successfully.');
+    res.send(
+      'User added successfully, click <a href="/">here</a> to head back to the homepage'
+    );
+  });
+});
+
+/////////////
+/// Login ///
+/////////////
+/**
+ * GET for signup to render a form
+ */
+app.get('/login', (req, res) => {
+  if (req.cookies.userId) {
+    res.redirect('/');
+  } else {
+    res.render('loginGET');
+  }
+});
+
+/**
+ * POST to check user credentials for login
+ */
+app.post('/login', (req, res) => {
+  const data = req.body;
+  // convert email to lowercase
+  data.email.toLowerCase();
+  const insert = [data.email];
+  const query = 'SELECT * FROM users WHERE email = $1';
+  pool.query(query, insert, (err, result) => {
+    if (err) {
+      console.log('Read error:', err);
+      res.status(503).send('Read error');
+      return;
+    }
+    if (result.rows.length === 0) {
+      console.log('Email is wrong.');
+      res.status(403).send('Sorry user/pass is wrong.');
+      return;
+    }
+    const user = result.rows[0];
+    if (user.password === data.password) {
+      res.cookie('userId', user.id);
+      res.send(
+        'Logged in. Click <a href="/">here</a> to head back to the homepage'
+      );
+    } else {
+      res.status(403).send('Sorry user/pass is wrong.');
+    }
+  });
+});
+
+/////////////
+/// Logout ///
+/////////////
+app.get('/logout', (req, res) => {
+  res.clearCookie('userId');
+  res.send(
+    'Successfully logged out, Click <a href="/">here</a> to head back to the homepage'
+  );
 });
 
 /////////////
@@ -236,6 +378,7 @@ app.post('/species', (req, res) => {
     if (err) {
       console.log('Write error:', err);
       res.status(504).send('Write error');
+      return;
     }
     console.log('Write Successful');
     res.send(
@@ -253,6 +396,7 @@ app.get('/species/all', (req, res) => {
     if (err) {
       console.log('Read error:', err);
       res.status(504).send('Read error');
+      return;
     }
     if (result.rows.length === 0) {
       console.log('No data');
