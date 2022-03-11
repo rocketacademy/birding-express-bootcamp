@@ -18,6 +18,7 @@
             <th>No.</th>
             <th>Name</th>
             <th>Scientific Name</th>
+            <th>Other Functions</th>
           </tr>
         </thead>
         <tbody>
@@ -30,6 +31,21 @@
             </td>
             <td><%= data[i].name %></td>
             <td><%= data[i].scientific_name %></td>
+            <td>
+              <form
+                class="d-inline-block"
+                action="/species/<%= data[i].id %>/edit"
+              >
+                <input type="submit" value="Edit" />
+              </form>
+              <form
+                class="d-inline-block"
+                action="/species/<%= data[i].id %>/delete?_method=DELETE"
+                method="POST"
+              >
+                <input type="submit" value="Delete" />
+              </form>
+            </td>
           </tr>
           <% } %>
         </tbody>
