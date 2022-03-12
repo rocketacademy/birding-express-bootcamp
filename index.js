@@ -7,6 +7,7 @@ import express, { urlencoded } from 'express';
 import pg from 'pg';
 import methodOverride from 'method-override';
 import cookieParser from 'cookie-parser';
+import jsSHA from 'jssha';
 
 const pgConnectionConfigs = {
   user: 'kennethongcs',
