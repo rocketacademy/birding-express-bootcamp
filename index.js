@@ -284,9 +284,14 @@ app.get('/signup', (req, res) => {
  */
 app.post('/signup', (req, res) => {
   const data = req.body;
-  // change email to lower case
-  data.email.toLowerCase();
-  const insert = Object.values(data);
+  // init the SHA obj
+  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+  // input pass from req to SHA object
+  shaObj.update(data.password);
+  // get hashed password
+  const hashedPassword = shaObj.getHash('HEX');
+  const insert = [req.body.email.toLowerCase(), hashedPassword];
+  console.log(insert);
   const query = 'INSERT INTO users (email, password) VALUES ($1, $2)';
   pool.query(query, insert, (err, results) => {
     if (err) {
@@ -320,9 +325,11 @@ app.get('/login', (req, res) => {
  */
 app.post('/login', (req, res) => {
   const data = req.body;
-  // convert email to lowercase
-  data.email.toLowerCase();
-  const insert = [data.email];
+  const salt = 'this will hash';
+  const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+  shaObj.update(data.password);
+  const hashedPassword = shaObj.getHash('HEX');
+  const insert = [req.body.email.toLowerCase()];
   const query = 'SELECT * FROM users WHERE email = $1';
   pool.query(query, insert, (err, result) => {
     if (err) {
@@ -336,8 +343,13 @@ app.post('/login', (req, res) => {
       return;
     }
     const user = result.rows[0];
-    if (user.password === data.password) {
+    if (user.password === hashedPassword) {
+      const shaObj2 = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+      const unhashedCookieString = `${user.email}-${salt}`;
+      shaObj2.update(unhashedCookieString);
+      const hashedUserId = shaObj2.getHash('HEX');
       res.cookie('userId', user.id);
+      res.cookie('loggedInHash', hashedUserId);
       res.send(
         'Logged in. Click <a href="/">here</a> to head back to the homepage'
       );
@@ -352,6 +364,7 @@ app.post('/login', (req, res) => {
 /////////////
 app.get('/logout', (req, res) => {
   res.clearCookie('userId');
+  res.clearCookie('loggedInHash');
   res.send(
     'Successfully logged out, Click <a href="/">here</a> to head back to the homepage'
   );
