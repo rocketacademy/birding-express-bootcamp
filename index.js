@@ -84,41 +84,75 @@ app.get('/note', (req, res) => {
       res.status(404).send('Read Error.');
       return;
     }
-    const data = result.rows;
-    res.render('form', { data });
+    const species = result.rows;
+    const queryBehavior = 'SELECT * FROM behaviors';
+    // get list of behaviors from table and add into form
+    pool.query(queryBehavior, (err, behaviorResult) => {
+      if (err) {
+        console.log('DB read error: ', err);
+        res.status(404).send('Read Error.');
+        return;
+      }
+      const behaviors = behaviorResult.rows;
+      res.render('form', { species, behaviors });
+    });
   });
 });
 
 /**
- * POST for 'note' page to get form data
+ * POST for 'note' page to get form data DOING
  */
 app.post('/note', (req, res) => {
   // get data from form using req.body
-  const formData = Object.values(req.body);
+  // const formData = Object.values(req.body);
+  const data = req.body;
+  const formData = [
+    data.date,
+    data.time,
+    data.day,
+    data.species_id,
+    data.flocksize,
+  ];
   // retrieve userId from cookie
   const { userId } = req.cookies;
-  const input = formData.map((data) => {
-    // convert all form data to lower case
-    const lower = data.toLowerCase();
-    // convert 1st letter to upper
-    return lower[0].toUpperCase() + lower.slice(1, lower.length);
-  });
-  // add userId into input
-  input.push(userId);
-  const query =
-    'INSERT INTO notes (date, time, day, species_id, flocksize, behavior, user_created) VALUES($1, $2, $3, $4, $5, $6, $7) ';
 
-  pool.query(query, input, (err, result) => {
+  // add userId into input
+  formData.push(userId);
+
+  const query =
+    'INSERT INTO notes (date, time, day, species_id, flocksize, user_created) VALUES($1, $2, $3, $4, $5, $6) RETURNING *';
+
+  pool.query(query, formData, (err, result) => {
     if (err) {
       console.log('Write error: ', err);
       res.status(504).send('Write error, please contact server administrator.');
       return;
     }
-    console.log(result.rows);
+    console.log(result.rows[0]);
+    const noteId = result.rows[0].id;
+    const behaviorquery =
+      'INSERT INTO note_behaviors (note_id, behavior_id) VALUES ($1, $2)';
+    // loop over each behavior recorded
+    req.body.behavior_id.forEach((behavior) => {
+      const note_behaviorsValues = [noteId, behavior];
+      let queryCounter = 0;
+      pool.query(behaviorquery, note_behaviorsValues, (err, result) => {
+        if (err) {
+          console.log('Write error: ', err);
+          res
+            .status(504)
+            .send('Write error, please contact server administrator.');
+          return;
+        }
+        queryCounter += 1;
+        if (queryCounter === req.body.behavior_id.length) {
+          res.send(
+            'Thanks for your submission. Click <a href="/">here</a> to head back to the homepage'
+          );
+        }
+      });
+    });
   });
-  res.send(
-    'Thanks for your submission. Click <a href="/">here</a> to head back to the homepage'
-  );
 });
 
 /**
@@ -155,7 +189,7 @@ app.get('/note/:id', (req, res) => {
 });
 
 /**
- * GET for 'note/edit' page to edit data DOING
+ * GET for 'note/edit' page to edit data
  */
 app.get('/note/:id/edit', (req, res) => {
   // redirect to main page if user is not logged in
