@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import moment from 'moment';
 import pool from '../utils/dbConnect.js';
-import { isLoggedIn, getSpecies } from '../utils/helper.util.js';
+import { isLoggedIn, getSpecies, getBehaviors } from '../utils/helper.util.js';
 
 const router = Router();
 
@@ -25,8 +25,9 @@ const getNewNote = async (req, res) => {
   }
 
   const species = await getSpecies();
+  const behaviors = await getBehaviors();
 
-  res.render('edit', { source: 'new', species });
+  res.render('edit', { source: 'new', species, behaviors });
 };
 
 /**
@@ -37,7 +38,7 @@ const getNewNote = async (req, res) => {
  */
 const createNote = (req, res) => {
   const {
-    habitat, date, appearance, behavior, vocalisations, flockSize, species,
+    habitat, date, appearance, vocalisations, flockSize, species, behaviorIDs,
   } = req.body;
 
   // validate note data
@@ -46,10 +47,10 @@ const createNote = (req, res) => {
     return;
   }
 
-  const query = 'insert into notes (habitat, date, appearance, behavior, vocalisations, flock_size, user_id, species_id) values ($1, $2, $3, $4, $5, $6, $7, $8) returning id';
+  const query = 'insert into notes (habitat, date, appearance, vocalisations, flock_size, user_id, species_id) values ($1, $2, $3, $4, $5, $6, $7) returning id';
   const inputData = [
     // eslint-disable-next-line max-len
-    habitat, date, appearance, behavior, vocalisations, flockSize, req.cookies.user.id, (species) || null];
+    habitat, date, appearance, vocalisations, flockSize, req.cookies.user.id, (species) || null];
 
   pool.query(query, inputData, (err, result) => {
     if (err) {
@@ -57,6 +58,17 @@ const createNote = (req, res) => {
       res.status(503).send(result.rows);
       return;
     }
+
+    behaviorIDs.forEach((behaviorID) => {
+      const manyToManyQuery = `insert into behaviors_notes (behaviors_id, notes_id) values ($1, ${result.rows[0].id})`;
+
+      pool.query(manyToManyQuery, [behaviorID], (error) => {
+        if (error) {
+          console.log('Error executing query', err.stack);
+          res.status(503).send(result.rows);
+        }
+      });
+    });
 
     res.redirect(`/note/${result.rows[0].id}`);
   });
@@ -85,7 +97,7 @@ const getEditNote = (req, res) => {
   const query = 'select * from notes where id=$1';
   const inputData = [id];
 
-  pool.query(query, inputData, async (err, result) => {
+  pool.query(query, inputData, (err, result) => {
     if (err) {
       console.log('Error executing query', err.stack);
       res.status(503).send(result.rows);
@@ -102,9 +114,23 @@ const getEditNote = (req, res) => {
 
     note.date = moment(note.date).format('dddd, MMMM D, YYYY');
 
-    const species = await getSpecies();
+    const behaviorQuery = 'select b.id from behaviors_notes bn inner join behaviors b on bn.behaviors_id=b.id where bn.notes_id=$1';
 
-    res.render('edit', { note, source: 'edit', species });
+    pool.query(behaviorQuery, inputData, async (error, results) => {
+      if (error) {
+        console.log('Error executing query', err.stack);
+        res.status(503).send(result.rows);
+        return;
+      }
+      note.behaviorIDs = results.rows.map((behavior) => behavior.id);
+
+      const species = await getSpecies();
+      const behaviors = await getBehaviors();
+
+      res.render('edit', {
+        note, source: 'edit', species, behaviors,
+      });
+    });
   });
 };
 
@@ -124,7 +150,7 @@ const editNote = (req, res) => {
   }
 
   const {
-    habitat, date, appearance, behavior, vocalisations, flockSize, species,
+    habitat, date, appearance, vocalisations, flockSize, species, behaviorIDs,
   } = req.body;
 
   // validate note data
@@ -133,10 +159,12 @@ const editNote = (req, res) => {
     return;
   }
 
-  const query = 'update notes set habitat=$1, date=$2, appearance=$3, behavior=$4, vocalisations=$5, flock_size=$6, species_id=$7 where id=$8';
+  // TODO: Refactor to avoid triple nested queries
+
+  const query = 'update notes set habitat=$1, date=$2, appearance=$3, vocalisations=$4, flock_size=$5, species_id=$6 where id=$7';
 
   // eslint-disable-next-line max-len
-  const inputData = [habitat, date, appearance, behavior, vocalisations, flockSize, (species) || null, id];
+  const inputData = [habitat, date, appearance, vocalisations, flockSize, (species) || null, id];
 
   pool.query(query, inputData, (err, result) => {
     if (err) {
@@ -145,7 +173,35 @@ const editNote = (req, res) => {
       return;
     }
 
-    res.redirect(`/note/${id}`);
+    const resetQuery = 'delete from behaviors_notes where notes_id=$1';
+
+    pool.query(resetQuery, [id], (resetError) => {
+      if (resetError) {
+        console.log('Error executing query', resetError.stack);
+        res.status(503).send(result.rows);
+        return;
+      }
+
+      if (behaviorIDs) {
+        let behaviorList = behaviorIDs;
+        if (!Array.isArray(behaviorIDs)) {
+          behaviorList = [behaviorIDs];
+        }
+
+        behaviorList.forEach((behaviorID) => {
+          const manyToManyQuery = `insert into behaviors_notes (behaviors_id, notes_id) values ($1, ${id})`;
+
+          pool.query(manyToManyQuery, [behaviorID], (error) => {
+            if (error) {
+              console.log('Error executing query', error.stack);
+              res.status(503).send(result.rows);
+            }
+          });
+        });
+      }
+
+      res.redirect(`/note/${id}`);
+    });
   });
 };
 
@@ -176,12 +232,23 @@ const getNoteByID = (req, res) => {
 
     const note = result.rows[0];
 
-    if (note) {
-      note.date = moment(note.date).format('dddd, MMMM D, YYYY');
-      res.render('note', { note, source: `note-${id}` });
-    } else {
-      res.status(404).send('Sorry, we cannot find that!');
-    }
+    const behaviorQuery = 'select b.behavior from behaviors_notes bn inner join behaviors b on bn.behaviors_id=b.id where bn.notes_id=$1';
+
+    pool.query(behaviorQuery, inputData, (error, results) => {
+      if (err) {
+        console.log('Error executing query', error.stack);
+        res.status(503).send(results.rows);
+        return;
+      }
+      const behaviors = results.rows;
+
+      if (note) {
+        note.date = moment(note.date).format('dddd, MMMM D, YYYY');
+        res.render('note', { note, source: `note-${id}`, behaviors });
+      } else {
+        res.status(404).send('Sorry, we cannot find that!');
+      }
+    });
   });
 };
 

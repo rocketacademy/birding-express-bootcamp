@@ -1,0 +1,2 @@
+-- seed behaviors data
+INSERT INTO behaviors (behavior) VALUES ('Walking'), ('Resting'), ('Gathering Nesting Materials'), ('Mobbing'), ('Long Song'), ('Bathing'), ('Preening'), ('Territory Defense'), ('Climbing Tree'), ('Bark Feeding'), ('Hunting'), ('Flying'), ('Ground Feeding'), ('Feeder Feeding'), ('Soaring'), ('Pecking'), ('Drinking'), ('Perched'), ('Flocking'), ('Hovering'), ('Caring For Young'), ('Pooping'), ('Nest');

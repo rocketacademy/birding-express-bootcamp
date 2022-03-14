@@ -15,8 +15,8 @@
     <div class="collapse navbar-collapse ms-2" id="navbarNavAltMarkup">
       <div class="navbar-nav me-auto">
         <a
-          class="nav-link<%= (page === 'new') || (page === 'species') ? '' : ' active' %>"
-          <%= (page === 'new') || (page === 'species') ? '' : 'aria-current="page"' %>
+          class="nav-link<%= (page === 'new') || (page === 'species') || (page === 'behaviors') ? '' : ' active' %>"
+          <%= (page === 'new') || (page === 'species') || (page === 'behaviors') ? '' : 'aria-current="page"' %>
           href="/"
           >Home</a
         >
@@ -25,6 +25,12 @@
           <%= (page === 'species') ? 'aria-current="page"' : '' %>
           href="/species/all"
           >Species</a
+        >
+        <a
+          class="nav-link<%= (page === 'behaviors') ? ' active' : '' %>"
+          <%= (page === 'behaviors') ? 'aria-current="page"' : '' %>
+          href="/behaviors"
+          >Behaviors</a
         >
         <% if (user) { %>
         <a

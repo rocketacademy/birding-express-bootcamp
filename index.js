@@ -9,6 +9,7 @@ import signup from './routes/signup.js';
 import login from './routes/login.js';
 import logout from './routes/logout.js';
 import species from './routes/species.js';
+import behaviors from './routes/behaviors.js';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/signup', signup);
 app.use('/login', login);
 app.use('/logout', logout);
 app.use('/species', species);
+app.use('/behaviors', behaviors);
 
 // start the server listening for requests
 app.listen(process.env.PORT || 3004, () => console.log('Server is running...'));

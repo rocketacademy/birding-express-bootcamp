@@ -23,7 +23,7 @@
               required
             />
           </div>
-          <div class="mb-3 col-sm-3">
+          <div class="mb-3 col-sm-2">
             <label for="flockSize" class="form-label">Flock Size:</label>
             <input
               type="text"
@@ -34,7 +34,7 @@
               required
             />
           </div>
-          <div class="mb-3 col-sm-3">
+          <div class="mb-3 col-sm-4">
             <label for="date" class="form-label">Date:</label>
             <div class="input-group">
               <input
@@ -54,48 +54,47 @@
             </div>
           </div>
           <div class="mb-3 col-sm-6">
+            <div class="row">
+              <div class="col-12">
+                <label for="vocalisations" class="form-label">Vocalisations:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="vocalisations"
+                  name="vocalisations"
+                  value="<%= (source === 'edit') ? note.vocalisations : '' %>"
+                  required
+                />
+              </div>
+              <div class="col-12 mt-3">
+                <label for="species" class="form-label">Species:</label>
+                <select name="species" id="species" class="form-control">
+                  <option value=""></option>
+                  <% species.forEach((spec) => { %>
+                  <option value="<%= spec.id %>" <%= ((source === 'edit') && (spec.id === note.species_id)) ? 'selected' : '' %>><%= spec.name %> (<%= spec.scientific_name %>)</option>
+                  <% }); %>
+                </select>                
+              </div>
+            </div>
+          </div>
+          <div class="mb-3 col-sm-6">
             <label for="appearance" class="form-label">Appearance:</label>
             <textarea
               class="form-control"
               id="appearance"
               name="appearance"
-              rows="3"
+              rows="4" style="height: 124px;"
               required
             >
 <%= (source === 'edit') ? note.appearance : '' %></textarea
             >            
           </div>
-          <div class="mb-3 col-sm-6">
-            <label for="behavior" class="form-label">Behavior:</label>
-            <textarea
-              class="form-control"
-              id="behavior"
-              name="behavior"
-              rows="3"
-              required
-            >
-<%= (source === 'edit') ? note.behavior : '' %></textarea
-            >              
-          </div>
-          <div class="mb-3 col-sm-6">
-            <label for="vocalisations" class="form-label">Vocalisations:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="vocalisations"
-              name="vocalisations"
-              value="<%= (source === 'edit') ? note.vocalisations : '' %>"
-              required
-            />
-          </div>
-          <div class="mb-3 col-sm-6">
-            <label for="species" class="form-label">Species:</label>
-            <select name="species" id="species" class="form-control">
-              <option value=""></option>
-              <% species.forEach((spec) => { %>
-              <option value="<%= spec.id %>" <%= ((source === 'edit') && (spec.id === note.species_id)) ? 'selected' : '' %>><%= spec.name %> (<%= spec.scientific_name %>)</option>
-              <% }); %>
-            </select>
+          <div class="mb-3 col">
+            <label for="behavior" class="form-label">Behavior:</label><br>
+            <% behaviors.forEach((behavior) => { %>
+              <input type="checkbox" class="btn-check" name="behaviorIDs" value="<%= behavior.id %>" id="btn-check-outlined-<%= behavior.id %>" <%= ((source === 'edit') && note.behaviorIDs && note.behaviorIDs.includes(behavior.id)) ? 'checked ' : ' ' %> />
+              <label class="btn btn-outline-secondary btn-sm mb-1" for="btn-check-outlined-<%= behavior.id %>"><%= behavior.behavior %></label>
+            <% }); %>
           </div>
         </div>
         <input type="submit" class="btn btn-secondary" value="Submit" />

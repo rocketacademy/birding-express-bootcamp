@@ -33,3 +33,18 @@ export const getSpecies = async () => {
     return null;
   }
 };
+
+/**
+ * Get list of behaviors.
+ */
+export const getBehaviors = async () => {
+  const query = 'select id, behavior from behaviors';
+
+  try {
+    const result = await pool.query(query);
+    return result.rows;
+  } catch (err) {
+    console.log('Error executing query', err.stack);
+    return null;
+  }
+};

@@ -48,14 +48,17 @@ const getUserNotesByID = (req, res) => {
       notes.sort((first, second) => compare(first, second, sortBy, sortOrder));
     }
 
-    // format date
     notes.forEach((note) => {
       note.date = moment(note.date).format('dddd, MMMM D, YYYY');
     });
 
-    res.render('users', {
-      notes, source: 'users', sortBy, sortOrder,
-    });
+    if (notes.length > 0) {
+      res.render('users', {
+        notes, source: 'users', sortBy, sortOrder,
+      });
+    } else {
+      res.status(404).send('Sorry, we cannot find that!');
+    }
   });
 };
 

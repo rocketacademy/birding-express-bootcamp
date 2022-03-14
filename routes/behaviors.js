@@ -5,12 +5,12 @@ import { compare } from '../utils/compare.js';
 const router = Router();
 
 /**
- * Get list of species.
+ * Get list of behaviors.
  * @param {Object} req Request object.
  * @param {Object} res Response object.
  */
-const getSpecies = (req, res) => {
-  const query = 'select * from species order by name';
+const getBehaviors = (req, res) => {
+  const query = 'select * from behaviors order by behavior';
 
   pool.query(query, (err, result) => {
     if (err) {
@@ -18,17 +18,17 @@ const getSpecies = (req, res) => {
       res.status(503).send(result.rows);
       return;
     }
-    const species = result.rows;
+    const behaviors = result.rows;
 
     // sort list
     const { sortBy, sortOrder } = req.query;
     if (sortBy) {
-      species.sort((first, second) => compare(first, second, sortBy, sortOrder));
+      behaviors.sort((first, second) => compare(first, second, sortBy, sortOrder));
     }
 
-    if (species.length > 0) {
-      res.render('species', {
-        species, source: 'species', sortBy, sortOrder,
+    if (behaviors.length > 0) {
+      res.render('behaviors', {
+        behaviors, source: 'behaviors', sortBy, sortOrder,
       });
     } else {
       res.status(404).send('Sorry, we cannot find that!');
@@ -37,7 +37,7 @@ const getSpecies = (req, res) => {
 };
 
 router
-  .route('/all')
-  .get((req, res) => getSpecies(req, res));
+  .route('/')
+  .get((req, res) => getBehaviors(req, res));
 
 export default router;
