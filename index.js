@@ -133,9 +133,9 @@ app.post('/note', (req, res) => {
     const behaviorquery =
       'INSERT INTO note_behaviors (note_id, behavior_id) VALUES ($1, $2)';
     // loop over each behavior recorded
+    let queryCounter = 0;
     req.body.behavior_id.forEach((behavior) => {
       const note_behaviorsValues = [noteId, behavior];
-      let queryCounter = 0;
       pool.query(behaviorquery, note_behaviorsValues, (err, result) => {
         if (err) {
           console.log('Write error: ', err);
@@ -275,8 +275,17 @@ app.delete('/note/:id', (req, res) => {
       res.status(504).send('Delete error.');
       return;
     }
-    console.log('Successfully deleted');
-    res.render('/');
+    const queryDelNoteBehaviors =
+      'DELETE FROM note_behaviors WHERE note_id = $1';
+    pool.query(queryDelNoteBehaviors, input, (err, results) => {
+      if (err) {
+        console.log('Delete error:', err);
+        res.status(504).send('Delete error.');
+        return;
+      }
+      console.log('Successfully deleted');
+      res.redirect('/');
+    });
   });
 });
 
