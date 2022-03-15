@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('partials/bootstrap') %>
+    <link rel="stylesheet" href="/styles.css" />
+    <title>List of Species</title>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+    <h2 class="text-center mt-4">List of Notes Below:</h2>
+    <main class="container-fluid">
+      <table class="table table-hover table-bordered mt-4">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Day</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for( let i = 0; i < noteData.length; i++ ) { %>
+          <tr>
+            <td>
+              <a class="text-white" href="/note/<%= noteData[i].id %> "
+                >Sighting <%= i + 1%>
+              </a>
+            </td>
+            <td><%= noteData[i].date.toISOString().slice(0,10) %></td>
+            <td><%= noteData[i].time %></td>
+            <td><%= noteData[i].day%></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
