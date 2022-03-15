@@ -22,7 +22,7 @@ const app = express();
 
 // TODO
 // 1. data validation
-// 2. species index / index edit / index del
+// 2. Edit singlenote ejs to use latest behavior
 
 // to use ejs
 app.set('view engine', 'ejs');
@@ -100,7 +100,7 @@ app.get('/note', (req, res) => {
 });
 
 /**
- * POST for 'note' page to get form data DOING
+ * POST for 'note' page to get form data
  */
 app.post('/note', (req, res) => {
   // get data from form using req.body
@@ -156,7 +156,7 @@ app.post('/note', (req, res) => {
 });
 
 /**
- * GET for 'note' page to render a form
+ * GET for 'note' page to render a form DOING
  */
 app.get('/note/:id', (req, res) => {
   const id = Number(req.params.id);
@@ -183,7 +183,20 @@ app.get('/note/:id', (req, res) => {
         res.status(504).send('Server error.');
       }
       const user = result.rows[0];
-      res.render('singlenote', { data, user });
+
+      // 3rd query to get behavior names
+
+      const behaviorQuery =
+        'SELECT behaviors.id, behaviors.behavior, note_behaviors.note_id FROM behaviors INNER JOIN note_behaviors ON behaviors.id = note_behaviors.behavior_id WHERE note_behaviors.note_id = $1';
+      pool.query(behaviorQuery, input, (err, result) => {
+        if (err) {
+          console.log('Read error query 2', err);
+          res.status(504).send('Server error.');
+        }
+        const behaviors = result.rows;
+        console.log(behaviors);
+        res.render('singlenote', { data, user, behaviors });
+      });
     });
   });
 });
