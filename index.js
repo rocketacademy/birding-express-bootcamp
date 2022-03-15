@@ -8,6 +8,7 @@ import pg from 'pg';
 import methodOverride from 'method-override';
 import cookieParser from 'cookie-parser';
 import jsSHA from 'jssha';
+import { upperCaseFirstLetter } from './helperFunctions.js';
 
 const pgConnectionConfigs = {
   user: 'kennethongcs',
@@ -156,7 +157,7 @@ app.post('/note', (req, res) => {
 });
 
 /**
- * GET for 'note' page to render a form DOING
+ * GET for 'note' page to render a form
  */
 app.get('/note/:id', (req, res) => {
   const id = Number(req.params.id);
@@ -551,5 +552,48 @@ app.delete('/species/:id/delete', (req, res) => {
     }
     console.log('Successfully deleted');
     res.redirect('/species/all');
+  });
+});
+
+//////////////
+// BEHAVIOR //
+//////////////
+
+/**
+ * GET to render a list of behaviors
+ */
+app.get('/behaviors', (req, res) => {
+  const behaviorsQuery = 'SELECT * FROM behaviors';
+  pool.query(behaviorsQuery, (err, result) => {
+    if (err) {
+      console.log('Read error', err);
+      res.status(504).send('Read error.');
+      return;
+    }
+    const listOfBehaviors = result.rows;
+    res.render('behaviorsAll', { listOfBehaviors });
+  });
+});
+
+/**
+ * GET to render a behavior with all list of notes associated with the behavior
+ */
+
+app.get('/behaviors/:id', (req, res) => {
+  const { id } = req.params;
+  const input = [id];
+  // get id of notes that correspond to behavior id
+  const noteQuery =
+    'SELECT notes.id, notes.date, notes.time, notes.day FROM notes INNER JOIN note_behaviors ON notes.id = note_behaviors.note_id WHERE note_behaviors.behavior_id = $1';
+
+  pool.query(noteQuery, input, (err, result) => {
+    if (err) {
+      console.log('Read error', err);
+      res.status(504).send('Read error.');
+      return;
+    }
+    const noteData = result.rows;
+
+    res.render('behaviorsSINGLE', { noteData });
   });
 });
