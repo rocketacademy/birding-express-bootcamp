@@ -34,7 +34,9 @@
       </div>
       <div>
         <h3>Behavior Observed</h3>
-        <p><%= data.behavior%></p>
+        <% behaviors.forEach(x => { %>
+        <p><%= x.behavior%></p>
+        <% }) %>
       </div>
       <div>
         <h3>User that created:</h3>
