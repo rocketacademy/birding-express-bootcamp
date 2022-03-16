@@ -48,3 +48,19 @@ export const getBehaviors = async () => {
     return null;
   }
 };
+
+/**
+ * Get list of comments.
+ */
+export const getComments = async (notesID) => {
+  const query = 'select c.id, c.text, c.date_time, u.email from comments c inner join users u on c.user_id=u.id where c.notes_id=$1 order by c.date_time desc';
+  const inputData = [notesID];
+
+  try {
+    const result = await pool.query(query, inputData);
+    return result.rows;
+  } catch (err) {
+    console.log('Error executing query', err.stack);
+    return null;
+  }
+};

@@ -7,8 +7,8 @@
       <div class="row">
         <h2 class="ms-3 mt-3">Note</h2>
       </div>
-      <div class="row">
-        <div class="col">
+      <div class="row row-cols-1 row-cols-sm-2">
+        <div class="col col-xs-12">
           <div class="card border-dark mb-3" style="max-width: 24rem">
             <div class="card-header bg-transparent border-dark">
               <div class="row">
@@ -63,7 +63,7 @@
                       >
                     </div>
                     <div class="col-12">
-                      <small>Behavior:</small>
+                      <small>Behaviors:</small>
                       <% behaviors.forEach((behavior) => { %>
                       <button class="btn btn-secondary btn-sm mb-1">
                         <%= behavior.behavior %>
@@ -76,6 +76,31 @@
                   </div>
                 </a>
               </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border-dark mb-3">
+            <div class="card-header bg-transparent border-dark">
+              <small>Comments</small>
+            </div>
+            <div
+              class="card-body text-secondary pt-0"
+              style="transform: rotate(0)"
+            >
+              <% comments.forEach((comment) => { %>
+              <div class="row">
+                <div class="col-6 fw-bold">
+                  <small><%= comment.email %></small>
+                </div>
+                <div class="col-6 text-end">
+                  <small><%= comment.date_time %></small>
+                </div>
+              </div>
+              <div class="row border-bottom pb-2 mb-2">
+                <div class="col"><small><%= comment.text %></small></div>
+              </div>
+              <% }) %>
             </div>
           </div>
         </div>

@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import moment from 'moment';
 import pool from '../utils/dbConnect.js';
-import { isLoggedIn, getSpecies, getBehaviors } from '../utils/helper.util.js';
+import {
+  isLoggedIn, getSpecies, getBehaviors, getComments,
+} from '../utils/helper.util.js';
 
 const router = Router();
 
@@ -234,17 +236,24 @@ const getNoteByID = (req, res) => {
 
     const behaviorQuery = 'select b.behavior from behaviors_notes bn inner join behaviors b on bn.behaviors_id=b.id where bn.notes_id=$1';
 
-    pool.query(behaviorQuery, inputData, (error, results) => {
-      if (err) {
+    pool.query(behaviorQuery, inputData, async (error, results) => {
+      if (error) {
         console.log('Error executing query', error.stack);
         res.status(503).send(results.rows);
         return;
       }
       const behaviors = results.rows;
+      const comments = await getComments(id);
 
       if (note) {
         note.date = moment(note.date).format('dddd, MMMM D, YYYY');
-        res.render('note', { note, source: `note-${id}`, behaviors });
+        comments.forEach((comment) => {
+          comment.date_time = moment(comment.date_time).fromNow();
+        });
+
+        res.render('note', {
+          note, source: `note-${id}`, behaviors, comments,
+        });
       } else {
         res.status(404).send('Sorry, we cannot find that!');
       }
