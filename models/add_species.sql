@@ -4,4 +4,4 @@ CREATE TABLE IF NOT EXISTS species (
     scientific_name TEXT
 );
 
-ALTER TABLE notes ADD COLUMN IF NOT EXISTS species_id INTEGER;
+ALTER TABLE notes ADD COLUMN IF NOT EXISTS species_id INTEGER REFERENCES species(id);
