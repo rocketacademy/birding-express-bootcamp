@@ -290,6 +290,42 @@ const deleteNoteByID = (req, res) => {
   });
 };
 
+/**
+ * Create comment.
+ * @param {Object} req Request object.
+ * @param {Object} res Response object.
+ * @returns Redirection to note page.
+ */
+const createComment = (req, res) => {
+  if (!isLoggedIn(req)) {
+    res.redirect('/login');
+    return;
+  }
+
+  const { id } = req.params;
+
+  // eslint-disable-next-line no-restricted-globals
+  if (isNaN(id)) {
+    res.status(404).send('Sorry, we cannot find that!');
+    return;
+  }
+
+  const { comment } = req.body;
+
+  const query = 'insert into comments (text, notes_id, user_id, date_time) values ($1, $2, $3, now())';
+  const inputData = [comment, id, req.cookies.user.id];
+
+  pool.query(query, inputData, (err, result) => {
+    if (err) {
+      console.log('Error executing query', err.stack);
+      res.status(503).send(result.rows);
+      return;
+    }
+
+    res.redirect(`/note/${id}`);
+  });
+};
+
 router
   .route('/')
   .get((req, res) => getNewNote(req, res))
@@ -304,5 +340,9 @@ router
 router
   .route('/:id/edit')
   .get((req, res) => getEditNote(req, res));
+
+router
+  .route('/:id/comment')
+  .post((req, res) => createComment(req, res));
 
 export default router;
