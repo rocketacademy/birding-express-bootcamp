@@ -195,7 +195,7 @@ app.get('/note/:id', (req, res) => {
           res.status(504).send('Server error.');
         }
         const behaviors = result.rows;
-        console.log(behaviors);
+        // console.log(behaviors);
         res.render('singlenote', { data, user, behaviors });
       });
     });
@@ -203,7 +203,7 @@ app.get('/note/:id', (req, res) => {
 });
 
 /**
- * GET for 'note/edit' page to edit data
+ * GET for 'note/edit' page to edit data DOING
  */
 app.get('/note/:id/edit', (req, res) => {
   // redirect to main page if user is not logged in
@@ -226,6 +226,7 @@ app.get('/note/:id/edit', (req, res) => {
       const id = Number(req.params.id);
       const input = [id];
       // check if user created form is same as what user clicked in GET
+      // console.log(usersCreatedFormId);
       if (usersCreatedFormId.indexOf(id) !== -1) {
         const query = 'SELECT * FROM notes WHERE id=$1';
         pool.query(query, input, (err, result) => {
@@ -238,7 +239,32 @@ app.get('/note/:id/edit', (req, res) => {
             res.status(404).send('No data found.');
           }
           const data = result.rows[0];
-          res.render('singleEdit', { data });
+          const queryBehavior =
+            'SELECT note_behaviors.note_id, behaviors.id, behaviors.behavior FROM note_behaviors INNER JOIN behaviors ON note_behaviors.behavior_id = behaviors.id WHERE note_behaviors.note_id = $1';
+          pool.query(queryBehavior, input, (err, result) => {
+            if (err) {
+              console.log('Get error:', err);
+              res.status(504).send('Get error.');
+              return;
+            }
+            const behavior = result.rows;
+            data.behavior = behavior;
+            // console.log(data);
+            const queryBehaviorList = 'SELECT * FROM behaviors';
+            const behaviorIds = result.rows.map((x) => {
+              return x.id;
+            });
+            pool.query(queryBehaviorList, (err, result) => {
+              if (err) {
+                console.log('Get error:', err);
+                res.status(504).send('Get error.');
+                return;
+              }
+              const behaviorList = result.rows;
+              console.log(behaviorList);
+              res.render('singleEdit', { data, behaviorList, behaviorIds });
+            });
+          });
         });
       } else {
         res.redirect('/');
@@ -597,3 +623,8 @@ app.get('/behaviors/:id', (req, res) => {
     res.render('behaviorsSINGLE', { noteData });
   });
 });
+
+//////////////
+// Comments //
+//////////////
+app.get('/note/:id', (req, res) => {});
