@@ -160,6 +160,8 @@ app.post('/note', (req, res) => {
  * GET for 'note' page to render a form
  */
 app.get('/note/:id', (req, res) => {
+  // check if user is logged in (for use in ejs)
+  const { userId } = req.cookies;
   const id = Number(req.params.id);
   const input = [id];
   const query = 'SELECT * FROM notes WHERE id=$1';
@@ -196,14 +198,24 @@ app.get('/note/:id', (req, res) => {
         }
         const behaviors = result.rows;
         // console.log(behaviors);
-        res.render('singlenote', { data, user, behaviors });
+        const commentsQuery =
+          'SELECT comments.note_id, comments.sighting_comments, users.email FROM comments INNER JOIN users ON comments.user_commented = users.id  WHERE comments.note_id = $1';
+        pool.query(commentsQuery, input, (err, result) => {
+          if (err) {
+            console.log('Read error comments query', err);
+            res.status(504).send('Server error.');
+          }
+          const comments = result.rows;
+          // console.log(comments);
+          res.render('singlenote', { data, user, behaviors, comments, userId });
+        });
       });
     });
   });
 });
 
 /**
- * GET for 'note/edit' page to edit data DOING
+ * GET for 'note/edit' page to edit data
  */
 app.get('/note/:id/edit', (req, res) => {
   // redirect to main page if user is not logged in
@@ -226,7 +238,6 @@ app.get('/note/:id/edit', (req, res) => {
       const id = Number(req.params.id);
       const input = [id];
       // check if user created form is same as what user clicked in GET
-      // console.log(usersCreatedFormId);
       if (usersCreatedFormId.indexOf(id) !== -1) {
         const query = 'SELECT * FROM notes WHERE id=$1';
         pool.query(query, input, (err, result) => {
@@ -249,7 +260,6 @@ app.get('/note/:id/edit', (req, res) => {
             }
             const behavior = result.rows;
             data.behavior = behavior;
-            // console.log(data);
             const queryBehaviorList = 'SELECT * FROM behaviors';
             const behaviorIds = result.rows.map((x) => {
               return x.id;
@@ -261,7 +271,6 @@ app.get('/note/:id/edit', (req, res) => {
                 return;
               }
               const behaviorList = result.rows;
-              console.log(behaviorList);
               res.render('singleEdit', { data, behaviorList, behaviorIds });
             });
           });
@@ -625,6 +634,25 @@ app.get('/behaviors/:id', (req, res) => {
 });
 
 //////////////
-// Comments //
+// COMMENTS //
 //////////////
-app.get('/note/:id', (req, res) => {});
+
+app.post('/note/:id/comment', (req, res) => {
+  const { userId } = req.cookies;
+  const noteId = Number(req.params.id);
+  // get user comments from form
+  const userComments = req.body.comments;
+  const insert = [noteId, userComments, userId];
+  // add userComments into comments table
+  const addCommentsQuery =
+    'INSERT INTO comments (note_id, sighting_comments, user_commented) VALUES($1, $2, $3)';
+  // console.log(insert);
+  pool.query(addCommentsQuery, insert, (err, result) => {
+    if (err) {
+      console.log('Write error', err);
+      res.status(504).send('Write error');
+      return;
+    }
+    res.redirect('/');
+  });
+});
