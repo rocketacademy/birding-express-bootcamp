@@ -42,6 +42,36 @@
         <h3>User that created:</h3>
         <p><%= user.email%></p>
       </div>
+      <div>
+        <!-- to show comments -->
+        <h3>Comments:</h3>
+        <% comments.forEach(comment => { %>
+        <p><%= comment.sighting_comments %> - <%= comment.email %></p>
+        <% }) %>
+      </div>
+      <div>
+        <div>
+          <!-- form for comments -->
+          <form
+            action="/note/<%= data.id %>/comment"
+            method="POST"
+            class="form-group"
+          >
+            <label for="comments"> <h3>Add your comments below:</h3></label>
+            <p>(you must be logged in to comment)</p>
+            <input
+              class="form-control"
+              type="text"
+              id="comments"
+              name="comments"
+            />
+        </div>
+        <% if (userId === undefined) { %>
+          <input class="btn btn-success" type="submit" value="Submit" disabled/>
+            <% } else { %>
+          <input class="btn btn-success" type="submit" value="Submit" /><% } %>
+        </form>
+      </div>
     </main>
   </body>
 </html>
