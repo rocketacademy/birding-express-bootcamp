@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('header'); -%>
+  <body>
+    <%- include('navigation', { page: source }); -%>
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col ms-3 mt-3">
+          <h2>Bird Species</h2>
+        </div>
+        <div class="col text-end me-4 mt-3 ps-0 pe-0">
+          <span class="fs-6">Sort: </span>
+          <span>
+            <a
+              href="?sortBy=name<%= ((sortBy === 'name') && (sortOrder === 'asc')) ? '&sortOrder=desc' : '&sortOrder=asc' %>"
+              ><small>Name</small> <% if ((sortBy === 'name') && (sortOrder ===
+              'asc')) { %>↑<% } else if ((sortBy === 'name') && (sortOrder ===
+              'desc')) { %>↓<% }%>
+            </a>
+            |
+            <a
+              href="?sortBy=scientific_name<%= ((sortBy === 'scientific_name') && (sortOrder === 'asc')) ? '&sortOrder=desc' : '&sortOrder=asc' %>"
+              ><small>Scientific Name</small> <% if ((sortBy === 'scientific_name')
+              && (sortOrder === 'asc')) { %>↑<% } else if ((sortBy ===
+              'scientific_name') && (sortOrder === 'desc')) { %>↓<% }%>
+            </a></span
+          >
+        </div>
+      </div>
+      <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4">
+        <% species.forEach((spec) => { %>
+        <div class="col">
+          <div class="card border-dark mb-3" style="max-width: 24rem">
+            <div class="card-header bg-transparent border-dark">
+              <div class="row">
+                <div class="col-12">
+                  <small><%= spec.name %></small>
+                </div>
+              </div>
+            </div>
+            <div
+              class="card-body text-secondary pt-0"
+              style="transform: rotate(0)"
+            >
+              <p class="card-text">
+                <div class="row">
+                  <div class="col-12">
+                    <small><span class="fst-italic"
+                          ><%= spec.scientific_name %></span></small>
+                  </div>
+                </div>
+              </p>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+  </body>
+</html>

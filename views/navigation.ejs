@@ -1,0 +1,62 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand me-0" href="/">Bird Watching</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse ms-2" id="navbarNavAltMarkup">
+      <div class="navbar-nav me-auto">
+        <a
+          class="nav-link<%= (page === 'new') || (page === 'species') || (page === 'behaviors') ? '' : ' active' %>"
+          <%= (page === 'new') || (page === 'species') || (page === 'behaviors') ? '' : 'aria-current="page"' %>
+          href="/"
+          >Home</a
+        >
+        <a
+          class="nav-link<%= (page === 'species') ? ' active' : '' %>"
+          <%= (page === 'species') ? 'aria-current="page"' : '' %>
+          href="/species/all"
+          >Species</a
+        >
+        <a
+          class="nav-link<%= (page === 'behaviors') ? ' active' : '' %>"
+          <%= (page === 'behaviors') ? 'aria-current="page"' : '' %>
+          href="/behaviors"
+          >Behaviors</a
+        >
+        <% if (user) { %>
+        <a
+          class="nav-link<%= (page === 'new') ? ' active' : '' %>"
+          <%= (page === 'new') ? 'aria-current="page"' : '' %>
+          href="/note"
+          >New Note</a
+        >
+        <% } %>
+      </div>
+      <% if (user && user.email) { %>
+      <div class="m-2 ms-0">
+      <span class="text-light">Hi, <a href="/users/<%= user.id %>" class="text-decoration-underline text-light"><%= user.email %></a></span></div>
+      <% } %>
+      <% if (user) { %>
+      <form
+        action="/logout?_method=DELETE"
+        method="POST"
+      >
+        <button class="btn btn-outline-danger">Log Out</button>
+      </form>
+      <% } else { %>
+      <a href="/login">
+        <button class="btn btn-outline-success">Log In</button>
+      </a>
+      <% } %>
+    </div>
+  </div>
+</nav>

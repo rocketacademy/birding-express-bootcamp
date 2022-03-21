@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('header'); -%>
+  <body>
+    <%- include('navigation', { page: 'note' }); -%>
+    <div class="container">
+      <div class="row">
+        <h2 class="ms-3 mt-3">Note</h2>
+      </div>
+      <div class="row row-cols-1 row-cols-sm-2">
+        <div class="col col-xs-12">
+          <div class="card border-dark mb-3" style="max-width: 24rem">
+            <div class="card-header bg-transparent border-dark">
+              <div class="row">
+                <div class="col-12">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-calendar-event"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"
+                    />
+                    <path
+                      d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
+                    />
+                  </svg>
+                  <small><%= note.date %></small>
+                </div>
+              </div>
+            </div>
+            <div
+              class="card-body text-secondary pt-0"
+              style="transform: rotate(0)"
+            >
+              <p class="card-text">
+                <a
+                  href="/note/<%= note.id %>"
+                  class="stretched-link read-more text-secondary"
+                >
+                  <div class="row">
+                    <div class="col-12">
+                      <small>Habitat: <%= note.habitat %></small>
+                    </div>
+                    <div class="col-12">
+                      <small>Appearance: <%= note.appearance %></small>
+                    </div>
+                    <div class="col-12">
+                      <small>Vocalisations: <%= note.vocalisations %></small>
+                    </div>
+                    <div class="col-12">
+                      <small>Flock size: <%= note.flock_size %></small>
+                    </div>
+                    <div class="col-12">
+                      <small
+                        >Species: <%= note.species_name %> <% if
+                        (note.species_name) { %>(<span class="fst-italic"
+                          ><%= note.species_scientific_name %></span
+                        >)<% }%></small
+                      >
+                    </div>
+                    <div class="col-12">
+                      <small>Behaviors:</small>
+                      <% behaviors.forEach((behavior) => { %>
+                      <button class="btn btn-secondary btn-sm mb-1">
+                        <%= behavior.behavior %>
+                      </button>
+                      <% }) %>
+                    </div>
+                    <div class="col-12">
+                      <small>Created By: <%= note.email %></small>
+                    </div>
+                  </div>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border-dark mb-3" style="max-width: 24rem">
+            <div class="card-header bg-transparent border-dark">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-chat-left-text"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"
+                />
+                <path
+                  d="M3 3.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 6a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 6zm0 2.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"
+                />
+              </svg>
+              <small>Comments</small>
+            </div>
+            <div
+              class="card-body text-secondary pt-2"
+              style="transform: rotate(0)"
+            >
+              <form action="/note/<%= note.id %>/comment" method="POST">
+                <div class="row border-bottom pb-2 mb-2">
+                  <div class="col">
+                    <textarea
+                      class="form-control"
+                      id="comment"
+                      name="comment"
+                      rows="3"
+                      placeholder="Add a comment ..."
+                      style="font-size: 0.9rem"
+                      required
+                    ></textarea>
+                    <input
+                      class="btn btn-secondary btn-sm mt-2"
+                      type="submit"
+                      value="Post"
+                    />
+                  </div>
+                </div>
+              </form>
+              <% comments.forEach((comment) => { %>
+              <div class="row">
+                <div class="col-6 fw-bold">
+                  <small><%= comment.email %></small>
+                </div>
+                <div class="col-6 text-end">
+                  <small><%= comment.date_time %></small>
+                </div>
+              </div>
+              <div class="row border-bottom pb-2 mb-2">
+                <div class="col"><small><%= comment.text %></small></div>
+              </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
