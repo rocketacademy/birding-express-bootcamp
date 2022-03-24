@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('partials/bootstrap')%>
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Birding</title>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+    <main class="container-fluid">
+      <h2 class="text-center mt-4">Details of Sighting <%= data.id %></h2>
+      <div>
+        <h3 class="mt-4">Date of Sighting:</h3>
+        <p><%= data.date.toISOString().slice(0,10) %></p>
+      </div>
+      <div>
+        <h3>Time of Sighting</h3>
+        <p><%= data.time %></p>
+      </div>
+      <div>
+        <h3>Day of Sighting</h3>
+        <p><%= data.day %></p>
+      </div>
+      <div>
+        <h3>Flock Size</h3>
+        <p><%= data.flocksize%></p>
+      </div>
+      <div>
+        <h3>Species</h3>
+        <p><%= data.species_id%></p>
+      </div>
+      <div>
+        <h3>Behavior Observed</h3>
+        <% behaviors.forEach(x => { %>
+        <p><%= x.behavior%></p>
+        <% }) %>
+      </div>
+      <div>
+        <h3>User that created:</h3>
+        <p><%= user.email%></p>
+      </div>
+      <div>
+        <!-- to show comments -->
+        <h3>Comments:</h3>
+        <% comments.forEach(comment => { %>
+        <p><%= comment.sighting_comments %> - <%= comment.email %></p>
+        <% }) %>
+      </div>
+      <div>
+        <div>
+          <!-- form for comments -->
+          <form
+            action="/note/<%= data.id %>/comment"
+            method="POST"
+            class="form-group"
+          >
+            <label for="comments"> <h3>Add your comments below:</h3></label>
+            <p>(you must be logged in to comment)</p>
+            <input
+              class="form-control"
+              type="text"
+              id="comments"
+              name="comments"
+            />
+        </div>
+        <% if (userId === undefined) { %>
+          <input class="btn btn-success" type="submit" value="Submit" disabled/>
+            <% } else { %>
+          <input class="btn btn-success" type="submit" value="Submit" /><% } %>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

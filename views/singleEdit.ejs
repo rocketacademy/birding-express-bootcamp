@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('partials/bootstrap')%>
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Birding - Form</title>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+    <main class="container-fluid">
+      <header>
+        <h3 class="text-center mt-4">Record bird behavior below</h3>
+      </header>
+      <section>
+        <form action="/note/<%= data.id %>?_method=PUT" method="POST">
+          <div class="form-group">
+            <label for="date"
+              >Date: (previously entered: <%=
+              data.date.toISOString().slice(0,10) %>)
+            </label>
+            <input
+              id="date"
+              type="date"
+              name="date"
+              class="form-control"
+              value="<%= data.date %>"
+            />
+          </div>
+          <a href=""></a>
+          <div class="form-group">
+            <label for="time">Time:</label>
+            <input
+              id="time"
+              type="time"
+              name="time"
+              class="form-control"
+              value="<%= data.time %>"
+            />
+          </div>
+          <div class="form-group">
+            <label for="day">Day:</label><br />
+            <select class="form-control" name="day" id="day">
+              <!-- add previously selected value -->
+              <option selected="<%= data.day %> "><%= data.day %></option>
+              <option value="tuesday">Monday</option>
+              <option value="tuesday">Tuesday</option>
+              <option value="wednesday">Wednesday</option>
+              <option value="thursday">Thursday</option>
+              <option value="friday">Friday</option>
+              <option value="saturday">Saturday</option>
+              <option value="sunday">Sunday</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="flocksize">Flocksize:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="flocksize"
+              name="flocksize"
+              value="<%=data.flocksize%>"
+            />
+          </div>
+          <div class="">
+            Behaviors: <br />
+            <% behaviorList.forEach(element => { %>
+            <div class="form-group form-check-inline">
+              <!-- check if the list of ids clicked is corresponds to the behavior id at each element -->
+              <% if (behaviorIds.indexOf(element.id) !== -1) { %>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="behavior_id"
+                checked
+              />
+              <!-- the tag before else has to be paired with the end tag of the previous if otherwise the statements will evaluate separately and produce an error. -->
+              <% } else { %>
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="behavior_id"
+              /><% } %>
+              <label class="form-check-label"><%= element.behavior %> </label>
+            </div>
+            <% }) %>
+          </div>
+          <input type="submit" value="Submit" />
+          <input type="reset" value="Reset" />
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

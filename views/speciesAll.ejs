@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('partials/bootstrap') %>
+    <link rel="stylesheet" href="/styles.css" />
+    <title>List of Species</title>
+  </head>
+  <body>
+    <%- include('partials/nav') %>
+    <h2 class="text-center mt-4">List of Species Below:</h2>
+    <main class="container-fluid">
+      <table class="table table-hover table-bordered mt-4">
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Name</th>
+            <th>Scientific Name</th>
+            <th>Other Functions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for( let i = 0; i < data.length; i++ ) { %>
+          <tr>
+            <td>
+              <a class="text-white" href="/species/<%= data[i].id %> "
+                >No. <%= i + 1%>
+              </a>
+            </td>
+            <td><%= data[i].name %></td>
+            <td><%= data[i].scientific_name %></td>
+            <td>
+              <form
+                class="d-inline-block"
+                action="/species/<%= data[i].id %>/edit"
+              >
+                <input type="submit" value="Edit" />
+              </form>
+              <form
+                class="d-inline-block"
+                action="/species/<%= data[i].id %>/delete?_method=DELETE"
+                method="POST"
+              >
+                <input type="submit" value="Delete" />
+              </form>
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </main>
+  </body>
+</html>
