@@ -1,0 +1,30 @@
+<!-- Create new species. After submitting, redirect to species/all page -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Add New Species</title>
+  </head>
+  <body class="form">
+    <%- include('../templates/header-user'); -%>
+    <div class="wrapper form-div">
+      <h1>New Species</h1>
+      <form action="/species" method="POST">
+        <div class="input-div">
+          <label for="common_name">Commmon Name</label>
+          <input type="text" name="common_name" />
+        </div>
+
+        <div class="input-div">
+          <label for="scientific_name">Scientific Name</label>
+          <input type="text" name="scientific_name" />
+        </div>
+
+        <button type="submit" value="save" class="btn">Save</button>
+      </form>
+    </div>
+  </body>
+</html>

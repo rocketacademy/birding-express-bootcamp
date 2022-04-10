@@ -1,0 +1,29 @@
+<header>
+  <nav class="left">
+    <a href="/about">About</a>
+    <a href="/species/all">Species</a>
+  </nav>
+
+  <a href="/">
+    <div class="face">
+      <img
+        src="
+        ../assets/face-without-eyes.svg"
+        alt="logo"
+      />
+      <div class="iris iris-left"><div></div></div>
+      <div class="iris iris-right"><div></div></div>
+    </div>
+  </a>
+
+  <nav class="right">
+    <a href="/note">Add Note</a>
+
+    <!-- Toggle "Logout" when user has the header cookie -->
+    <form method="POST" action="/logout?_method=DELETE" class="nav-link">
+      <button type="submit" value="logout" class="btn-link">Log Out</button>
+    </form>
+  </nav>
+</header>
+
+<script src="eyes.js"></script>

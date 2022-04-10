@@ -1,0 +1,46 @@
+<!-- Single note -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Owl Sighting #<%= id %></title>
+  </head>
+  <body>
+    <%- include('../templates/header'); -%>
+    <h1>Owl Sighting</h1>
+
+    <div class="container">
+      <div class="photo">
+        <img src="<%= photo %> " />
+      </div>
+
+      <div class="form-div">
+        <span class="label">Type of Owl</span>
+        <span class="input"><%= owlType %> </span>
+      </div>
+
+      <div class="form-div">
+        <span class="label">Date</span>
+        <span class="input"><%= date %> </span>
+      </div>
+
+      <div class="form-div">
+        <span class="label">Spotter</span>
+        <span class="input"><%= spotter %> </span>
+      </div>
+
+      <div class="form-div">
+        <span class="label">Cuteness</span>
+        <span class="input"><%= cuteness %> </span>
+      </div>
+
+      <div class="form-div">
+        <span class="label">Location</span>
+        <span class="input"><%= location %> </span>
+      </div>
+    </div>
+  </body>
+</html>

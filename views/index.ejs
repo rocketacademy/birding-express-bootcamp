@@ -1,0 +1,33 @@
+<!-- All notes -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OwlO – Owls spotted in Singapore</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <%- include('../templates/header-user'); -%> 
+
+    <section class="cards">
+      <!-- For every row, I want to print a card -->
+      <% array.forEach( (object) => { %>
+      <a href="/note/<%= object.id %> ">
+        <div class="card">
+          <div class="card-overlay">
+            <h1><%= object.type_of_owl %></h1>
+        
+              <p>Spotted <%= object.date %></p>
+              <p><%= object.location %></p>
+              <p><%= object.cuteness_factor %> / 10 cuteness</p>
+        
+          </div>
+          <img src="<%= object.photo %> " />
+        </div>
+      </a>
+      <% }) %>
+    </div>
+  </body>
+</html>

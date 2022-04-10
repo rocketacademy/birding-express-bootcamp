@@ -1,0 +1,62 @@
+<!-- Single note -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Owl Sighting #<%= id %></title>
+  </head>
+  <body class="form">
+    <%- include('../templates/header-user'); -%>
+
+    <div class="container-grid container-50">
+      <h1>Owl Sighting</h1>
+      <div class="wrapper-50">
+        <div class="photo-50">
+          <img src="<%= photo %> " />
+        </div>
+
+        <div class="form-div form-50">
+          <div class="input-div">
+            <span class="label">Type of Owl</span>
+            <span class="input"><%= owlType %> </span>
+          </div>
+
+          <div class="input-div">
+            <span class="label">Date</span>
+            <span class="input"><%= date %> </span>
+          </div>
+
+          <div class="input-div">
+            <span class="label">Spotter</span>
+            <span class="input"><%= spotter %> </span>
+          </div>
+
+          <div class="input-div">
+            <span class="label">Cuteness</span>
+            <span class="input"><%= cuteness %> </span>
+          </div>
+
+          <div class="input-div">
+            <span class="label">Location</span>
+            <span class="input"><%= location %> </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="comments-div">
+        <form action="/note/:id" method="POST">
+          <div class="input-div">
+            <label for="comment">Comment</label>
+            <textarea name="comment" cols="30" rows="3"></textarea>
+          </div>
+          <button type="submit" value="comment" class="btn">Comment</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script src="/eyes.js"></script>

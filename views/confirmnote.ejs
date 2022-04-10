@@ -1,0 +1,21 @@
+<!-- Confirmation after submitting note or making changes -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Done!</title>
+  </head>
+  <body>
+    <%- include('../templates/header-user'); -%>
+    <div class="wrapper center-align">
+      <h1>
+        Woohoot!<br />
+        New owl added
+      </h1>
+      <a href="/note/<%= id %> ">See your owl again</a>
+    </div>
+  </body>
+</html>

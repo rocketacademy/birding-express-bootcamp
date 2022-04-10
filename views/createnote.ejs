@@ -1,0 +1,71 @@
+<!-- Create New Note -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Create New Note</title>
+  </head>
+  <body class="form">
+    <%- include('../templates/header-user'); -%>
+
+    <div class="wrapper form-div">
+      <h1>Add Note</h1>
+      <form action="/note" method="POST">
+        <!-- Input fields -->
+        <div class="free-text-form">
+          <div class="input-div">
+            <label for="type_of_owl">Type of Owl</label>
+            <input type="text" name="type_of_owl" />
+          </div>
+
+          <div class="input-div">
+            <label for="photo">Photo</label>
+            <input type="text" name="photo" />
+          </div>
+
+          <div class="input-div">
+            <label for="date">Date</label>
+            <input type="date" name="date" />
+          </div>
+
+          <div class="input-div">
+            <label for="spotter">Spotter</label>
+            <input type="text" name="spotter" />
+          </div>
+
+          <div class="input-div">
+            <label for="cuteness_factor">Cuteness Factor</label>
+            <input type="number" name="cuteness_factor" />
+          </div>
+
+          <div class="input-div">
+            <label for="location">Location</label>
+            <input type="text" name="location" />
+          </div>
+        </div>
+        <!-- Behavior Bingo -->
+        <div class="behavior-div">
+          <h2>Behavior Bingo</h2>
+          <div class="checkbox-div">
+            <% array.forEach( ( object ) => { %>
+            <div class="box">
+              <input
+                type="checkbox"
+                name="behavior_ids"
+                value="<%= object.id %> "
+              />
+              <span class="checkmark"></span>
+              <label><%= object.behavior %> </label>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+
+        <button type="submit" value="submit" class="btn">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

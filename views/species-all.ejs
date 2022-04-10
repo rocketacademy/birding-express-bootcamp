@@ -1,0 +1,37 @@
+<!-- All Owl Species -->
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Singapore Owl Species</title>
+  </head>
+  <body>
+    <%- include('../templates/header-user'); -%>
+    <div class="wrapper center-align">
+      <h1>Singapore Owl Species</h1>
+      <a href="/species/" class="btn">Add Species</a>
+      <div class="table-wrapper">
+        <div class="table">
+          <div class="row header">
+            <div class="cell"></div>
+            <div class="cell">Common Name</div>
+            <div class="cell">Scientific Name</div>
+          </div>
+
+          <% array.forEach( (object) => { %>
+          <div class="row">
+            <div class="cell">
+              <a href="/species/<%= object.id %>/edit">✏️</a>
+            </div>
+            <div class="cell"><%= object.name %></div>
+            <div class="cell"><%= object.scientific_name %></div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

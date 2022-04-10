@@ -1,0 +1,36 @@
+<!-- All behaviors -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles.css" />
+    <title>Singapore Owl Behaviors</title>
+  </head>
+  <body>
+    <%- include('../templates/header-user'); -%>
+    <div class="wrapper center-align">
+      <h1>Singapore Owl Behaviors</h1>
+      <div class="table-wrapper">
+        <div class="table">
+          <div class="row header">
+            <div class="cell">Behavior</div>
+            <div class="cell">Notes</div>
+          </div>
+
+          <% keys.forEach( ( key ) => { %>
+          <div class="row">
+            <div class="cell"><%= key %></div>
+            <div class="cell">
+              <% values.forEach( (value) => { %>
+              <p><%= value %></p>
+              <% }) %>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

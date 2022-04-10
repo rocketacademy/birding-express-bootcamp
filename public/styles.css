@@ -1,0 +1,462 @@
+@import url("https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&display=swap");
+
+:root {
+  --display: "Amiri", serif;
+  --monospace: "IBM Plex Mono", monospace;
+}
+
+html {
+  --black: #39372c;
+  --white: #f5f4ed;
+  --yellow: #e5e89a;
+  --light-green: #cdceba;
+  --light-green-30: rgb(205, 206, 186, 0.3);
+  --dark-green-30: rgb(58, 56, 44, 0.3);
+  --dark-green-60: rgb(58, 56, 44, 0.6);
+  --dark-green: #39372c;
+}
+
+/* ====== TYPOGRAPHY ====== */
+
+h1 {
+  font-family: var(--display);
+  font-size: 32px;
+  line-height: 110%;
+}
+
+p,
+body,
+a,
+.btn,
+.btn-link {
+  font-family: var(--monospace);
+  font-size: 12px;
+}
+
+.btn-link {
+  border: none;
+  padding: 0;
+  margin: 0 16px;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+.delete-btn {
+  margin: 12px 4px;
+}
+
+form.nav-link {
+  display: inline;
+}
+
+a,
+.btn-link {
+  transition: color 0.5s ease;
+  color: var(--dark-green);
+  text-decoration: none;
+}
+
+a:hover,
+.btn-link:hover {
+  color: var(--dark-green-60);
+}
+/* ====== CONTENT ====== */
+
+body {
+  background-color: var(--white);
+  color: var(--black);
+}
+
+/* ====== BUTTON STYLES ====== */
+
+a.btn,
+button.btn,
+.hero-btn {
+  padding: 8px 12px;
+  margin-right: 16px;
+  background-color: var(--light-green);
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.5s ease;
+  display: inline;
+  text-align: center;
+}
+
+a.btn:hover,
+button.btn:hover {
+  background-color: var(--dark-green-30);
+}
+
+.hero-btn {
+  background-color: var(--light-green-30);
+  max-width: fit-content;
+}
+/* ====== HEADER ====== */
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 6;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+
+  background-color: var(--white);
+  transition: background-color 1s ease;
+}
+
+header.scrolled {
+  background-color: var(--white);
+}
+
+header nav.right {
+  width: 200px;
+  text-align: right;
+}
+
+header nav.left {
+  width: 200px;
+  text-align: left;
+}
+
+header a {
+  margin: 0 0 0 16px;
+  /* margin left */
+}
+
+/* ====== EYES ====== */
+
+div.face {
+  height: 59px;
+  width: 59px;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  position: relative;
+  /*position the irises in relation to the face*/
+  z-index: 2;
+}
+
+div.iris {
+  position: absolute;
+  /* already precalculated where the black iris circles sit in relation to the image // coordinates of SVG */
+  top: 23px;
+  left: 11px;
+  z-index: 2;
+}
+
+div.iris-right {
+  left: 49px;
+}
+
+/* actual dots inside the eye  */
+div.iris div {
+  position: relative;
+  z-index: 4;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background-color: #052837;
+  border-radius: 3px;
+  transform: translate(-50%, -50%);
+  /*top left corners of the irises in the middle, rather than the center of the eye, which is a little offset. The transform: translate(-50%, -50%) is to move the irises right into the center. So, basically the top and left properties set the top left corner to where we want, and then the transform property moves the tag back over by half its width and height to be central*/
+}
+
+/* ====== PAGE CONTAINER ====== */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 100px auto 0 auto;
+  max-width: 1080px;
+}
+
+.wrapper-center {
+  align-items: center;
+  min-width: 700px;
+}
+.center-align {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* ====== HOMEPAGE (LOGIN)  ====== */
+
+section.welcome,
+section.img-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+}
+
+section.img-div {
+  text-align: center;
+  align-items: center;
+  max-width: 400px;
+  width: 100vw;
+  margin: auto;
+}
+
+/* ====== HOMEPAGE (DASHBOARD) ====== */
+
+.cards {
+  margin: 64px auto auto auto;
+  max-width: 1080px;
+
+  padding-left: 16px;
+  padding-right: 16px;
+
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.card,
+.card img {
+  width: 250px;
+  height: 400px;
+  object-fit: cover;
+  position: relative;
+}
+
+.card {
+  margin: 12px;
+}
+
+.card img {
+  transition: filter 0.3s;
+}
+
+.card:hover img {
+  filter: grayscale(1);
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: calc(100% - 32px);
+  height: 100%;
+  padding: 0 16px;
+
+  background-color: rgb(0, 0, 0, 0.7);
+
+  opacity: 0;
+  transition: opacity 0.3s ease-in;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.card:hover .card-overlay {
+  color: var(--white);
+  opacity: 1;
+}
+
+/* ====== TABLE ====== */
+
+.table-wrapper {
+  margin: 0 auto;
+  padding: 40px;
+  max-width: 800px;
+}
+
+@media screen and (max-width: 580px) {
+  .table {
+    display: block;
+  }
+}
+.table {
+  margin: 0 0 40px 0;
+  width: 100%;
+  display: table;
+}
+.row {
+  display: table-row;
+  background: var(--white);
+}
+
+.row:nth-of-type(odd) {
+  background: var(--light-green-30);
+}
+
+.row.header {
+  font-weight: 900;
+  background: var(--yellow);
+}
+
+@media screen and (max-width: 580px) {
+  .row {
+    padding: 14px 0 8px;
+  }
+
+  .row.header {
+    padding: 0;
+    height: 6px;
+  }
+
+  .row.cell {
+    margin-bottom: 10px;
+  }
+}
+
+.cell {
+  padding: 6px 12px;
+  display: table-cell;
+}
+
+@media screen and (max-width: 580px) {
+  .cell {
+    padding: 2px 16px;
+    display: block;
+  }
+}
+
+/* ====== CREATE NOTE – BEHAVIOR BINGO ====== */
+
+.behavior-div {
+  max-width: 960px;
+}
+
+.behavior-div h2 {
+  margin: 24px 0;
+}
+.checkbox-div {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  grid-auto-flow: dense;
+  margin-bottom: 16px;
+  grid-auto-rows: 60px;
+}
+
+.box {
+  grid-column: span 1;
+  grid-row: span 1;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+}
+
+.box:hover {
+  background-color: var(--light-green-30);
+}
+
+/* ====== FORM ====== */
+
+body.form {
+  background-color: var(--light-green);
+}
+
+.form-div {
+  max-width: 400px;
+  padding: 32px;
+  border: solid 2px var(--dark-green);
+  background-color: var(--white);
+}
+
+.form-div h1 {
+  margin: 0 0 24px 0;
+}
+
+.input-div {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 16px 0;
+}
+
+span.input,
+input,
+textarea {
+  font-family: var(--monospace);
+  font-size: 14px;
+  color: var(--dark-green);
+}
+
+textarea {
+  resize: none;
+  padding: 8px;
+}
+
+input {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  border-bottom: solid 1px var(--dark-green);
+  padding: 8px 0 2px 0;
+}
+
+textarea {
+  margin: 8px 0 0 0;
+  background-color: var(--white);
+  border: solid 1px var(--dark-green);
+  outline: none;
+  padding: 8px 0 2px 0;
+}
+
+label,
+span.label {
+  color: var(--dark-green-60);
+}
+
+.free-text-form {
+  margin: 0 0 24px 0;
+}
+
+.instead-div p {
+  margin: 12px 0 0 0;
+}
+
+.container-50 {
+  margin: 100px auto 0 auto;
+  max-width: 720px;
+}
+
+.container-50 h1 {
+  text-align: center;
+}
+
+.wrapper-50 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
+
+.form-50,
+.photo-50 {
+  width: 40vw;
+  height: 50vh;
+}
+
+.photo-50 img {
+  max-width: 30vw;
+  max-height: 62vh;
+  background-size: contain;
+  border: 2px solid var(--dark-green);
+}
+
+.comments-div {
+  color: var(--dark-green);
+  background-color: var(--dark-green-30);
+  padding: 24px;
+  margin: 32px 0;
+}
