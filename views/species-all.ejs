@@ -1,0 +1,21 @@
+<%- include('partials/header', {title: 'all species'}); %>
+<h1 class="d-flex justify-content-center mb-5">Birds Species</h1>
+<div class="all-species">
+  <% for(let i =0; i<speciesObjArr.length; i+=1){ %> 
+    <div class="row">
+      <div class="col-sm-2">
+        <a href="/species/<%= speciesObjArr[i].id %> "><%= speciesObjArr[i].name %></a>
+      </div>
+
+      <div class="col-sm-3">
+        <form action="/species/<%= speciesObjArr[i].id %>/delete?_method=DELETE" method="POST"><button type="submit" class="btn btn-sm btn-outline-danger mt-2">delete</button>
+        </form>
+      </div>
+
+      <div class="col-sm-1 order-2 sci-name">
+        <%= speciesObjArr[i].scientific_name %>
+      </div>
+    </div>
+  <% } %> 
+</div>
+<%- include('partials/footer') %>

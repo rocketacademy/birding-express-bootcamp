@@ -1,0 +1,17 @@
+<%- include('partials/header', {title: 'user dashboard'}) -%>
+<div class="card text-center">
+  <div class="card-header">Hi, user</div>
+  <div class="card-body">
+    <h5 class="card-title">user content</h5>
+    <p class="card-text">you are viwing your dashboard.</p>
+    <a href="/" class="btn btn-primary">View all notes</a>
+  </div>
+  <div class="card-footer text-muted">you visited some days ago</div>
+</div>
+
+<div class="container mt-5">
+  <form action="/logout?_method=DELETE" method="POST">
+    <button class="btn btn-primary" type="submit">Log out</button>
+  </form>
+</div>
+<%- include('partials/footer') -%>

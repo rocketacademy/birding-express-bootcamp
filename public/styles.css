@@ -1,0 +1,24 @@
+.main-container {
+  width: 80%;
+}
+body {
+  background-color: #a0c8a0;
+}
+.delete-icon {
+  width: 1.25rem;
+}
+.sci-name {
+  visibility: hidden;
+}
+.all-species {
+  margin: 5px;
+}
+
+.linktext {
+  color: white;
+}
+@media (min-width: 800px) {
+  .sci-name {
+    visibility: visible;
+  }
+}

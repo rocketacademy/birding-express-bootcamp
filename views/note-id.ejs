@@ -1,0 +1,52 @@
+<%- include('partials/header',{title: `note ${ singleNote.id}`}) %>
+<div class="container">
+  <div class="row">
+    <div class="card d-flex justify-content-center" style="width: 18rem">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><%=singleNote.date%></li>
+        <li class="list-group-item"><%=singleNote.time%></li>
+        <li class="list-group-item"><%=singleNote.day%></li>
+        <li class="list-group-item"><%=singleNote.flock_size%></li>
+      </ul>
+    <div class="card-footer"><%=singleNote.habitat%></div>
+  </div>
+</div>
+
+
+<div class="container mt-4">
+  <div class="row">
+      <form action="/note/<%=singleNote.id  %>/comment" method="POST">
+        <label for="comment">Leave a comment:
+          <textarea type=text id="comment" name="comment" style="width: 100%;"></textarea>
+        </label>
+        <div>
+          <button class= "btn btn-primary" type="submit">Comment</button>
+        </div>
+      </form>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <% for(let i =0; i<comments.length; i+=1){ %>
+        <div class="card mt-1" style="width: 18rem;">
+          <div class="card-body">
+            <span>Posted by: </span>
+            <% if((comments[i].comment_text !== undefined) || (comments[i].comment_text !== null) || (comments[i].comment_text !== ' ')) { %> 
+              <span class="card-text"><%= comments[i].posted_by  %> </span>
+            <% } %>
+            <% if (comments[i].comment_text === null) { %>
+              <span class="card-text">"guest user" </span>
+            <% } %>
+            <p class="card-text">〝<%= comments[i].comment_text  %>〞</p>
+            <a href="#" class="card-link">👍</a>
+            <a href="#" class="card-link">👎</a>
+          </div>
+      </div>
+   <% } %>
+  </div>
+</div>
+
+
+
+<%- include('partials/footer') %>

@@ -1,0 +1,1 @@
+INSERT INTO comments(comment_text, note_id) VALUES ('beautiful blue shades', '10'), ('nice feathers', '11'), ('long tails', '12');

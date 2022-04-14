@@ -1,0 +1,17 @@
+<%- include('partials/header', {title:'placeholder'}) -%>
+<div class="container">
+  <% for(let i =0; i<species.length; i+=1){ %>
+    <div class="card" style="width: 18rem">
+      <div class="card-header"><%= species[i].name %></div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><span>Scientific name: </span><%= species[i].scientific_name %></li>
+        <li class="list-group-item"><span>Sighting date: </span><%= species[i].date %></li>
+        <li class="list-group-item"><span>Sighting time: </span><%= species[i].time %></li>
+        <li class="list-group-item"><span>Sighting day: </span><%= species[i].day %></li>
+        <li class="list-group-item"><span>Habitat: </span><%= species[i].habitat %></li>
+        <li class="list-group-item"><span>Behaviour: </span><%= species[i].behaviour %></li>
+      </ul>
+    </div>
+ <% } %>
+</div>
+<%- include('partials/footer') -%>

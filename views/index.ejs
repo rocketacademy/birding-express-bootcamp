@@ -1,0 +1,19 @@
+<%- include('partials/header',{title: 'all notes'}) %>
+<div class="container">
+  <div class="row mt-3">
+<% for(let i =0; i<allNotes.length; i+=1){ %>
+
+<div class="card mr-2 mt-4" style="width: 18rem">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item"><%=allNotes[i].date%></li>
+    <li class="list-group-item"><%=allNotes[i].time%></li>
+    <li class="list-group-item"><%=allNotes[i].day%></li>
+    <li class="list-group-item"><%=allNotes[i].flock_size%></li>
+  </ul>
+  <div class="card-footer"><span><b>Habitat: </b></span><%=allNotes[i].habitat%></div>
+  <div class="card-footer"><span><b>Behaviour: </b></span><%=allNotes[i].behaviour%></div>
+  <div class="card-footer"><a href="/comments">View comments:</a></div>
+</div>
+
+<% } %>
+<%- include('partials/footer') %>
