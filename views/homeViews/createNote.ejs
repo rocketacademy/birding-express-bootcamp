@@ -1,0 +1,49 @@
+<%- include('../partials/header.ejs') %>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <form action="/note" method="POST">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="habitat">Habitat</label>
+            <input
+              type="text"
+              class="form-control"
+              id="habitat"
+              name="habitat"
+            />
+          </div>
+          <div class="form-group col-md-6">
+            <label for="behaviour">Behaviour</label>
+            <input
+              type="text"
+              class="form-control"
+              id="behaviour"
+              name="behaviour"
+            />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="flock_size">Flock Size</label>
+          <input
+            type="text"
+            class="form-control"
+            id="flock_size"
+            placeholder="Flock Size"
+            name="flock_size"
+          />
+        </div>
+        <div class="form-group">
+          <label for="date">date</label>
+          <input type="text" class="form-control" id="date" name="date" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

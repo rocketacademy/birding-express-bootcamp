@@ -1,0 +1,12 @@
+.child {
+  /* display: none; */
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.5s;
+}
+.parent:hover .child {
+  /* display: block; */
+  visibility: visible;
+  opacity: 1;
+  transition: 0.5s;
+}

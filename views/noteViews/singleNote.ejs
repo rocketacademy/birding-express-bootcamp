@@ -1,0 +1,38 @@
+<%- include('../partials/header.ejs') %>
+<a href="/note/all">back</a>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <div class="card p-3 mb-3 shadow parent">
+        <% data.forEach(row => { %>
+        <h1><%= row.habitat %></h1>
+        <h2><%= row.behaviour %></h2>
+        <small><%= row.flock_size %> </small>
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8">
+              <a
+                class="btn btn-sm btn-warning child"
+                href="/note/edit/<%=row.id%>"
+                >Edit</a
+              >
+              <a
+                class="btn btn-sm btn-danger child"
+                href="/note/delete/<%=row.id%>"
+                >Delete</a
+              >
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-2"></div>
+          </div>
+        </div>
+
+        <% }) %>
+      </div>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') %>

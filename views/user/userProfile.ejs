@@ -1,0 +1,46 @@
+<%- include('../partials/header.ejs') -%>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">Welcome<%= user_email %></div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <h1>Here are your notes</h1>
+      <% notes.forEach(note => { %>
+      <div class="card p-3 mb-3 shadow parent">
+        <h2><%= note.habitat %></h2>
+        <small><%= note.behaviour %></small>
+        <small><%= note.flock_size %></small>
+        <a href="note/single/<%=note.id%>">Read</a>
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8 d-flex justify-content-end">
+              <a
+                class="btn btn-sm btn-warning child mr-3"
+                href="/note/edit/<%=note.id%>"
+                >Edit</a
+              >
+              <a
+                class="btn btn-sm btn-danger child"
+                href="/note/delete/<%=note.id%>"
+                >Delete</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+
+<%- include('../partials/footer.ejs') -%>

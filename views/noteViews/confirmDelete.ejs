@@ -1,0 +1,34 @@
+<%- include('../partials/header.ejs') %>
+
+<div class="container mt-3 pt-4">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <h2>You are about to delete this article</h2>
+      <small>Are you sure?</small>
+      <div class="cards p-3 mt-3">
+        <ul>
+          
+            <% data.forEach(row => { %>
+            <li>Habitat:<%= row.habitat %></li>
+            <li>Behaviour: <%= row.behaviour %></li>
+
+         <form action="/note/delete/<%= data[0].id %>" method="POST">
+                        <a type="submit"
+              class="btn btn-sm btn-warning mt-3"
+              href="/note/single/<%=row.id%>"
+              >Keep Note</a
+            >
+            <input type="submit" value="Delete"
+              class="btn btn-sm btn-danger mt-3"
+              ></input
+            >
+            <% }) %>
+          </form>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+<%- include('../partials/footer.ejs') %>

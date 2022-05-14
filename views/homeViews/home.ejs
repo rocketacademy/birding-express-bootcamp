@@ -1,0 +1,17 @@
+
+ <%- include('../partials/header.ejs') %>
+
+      <% if (page === 'home') { %>
+      <div class="jumbotron">
+        <div class="container">
+          <h1 class="display-4"><h1><%= page %></h1></h1>
+          <p class="lead"><%= desc %></p>
+        </div>
+      </div>
+      <% } else { %>
+      <h1><%= page %></h1>
+ 
+  </div>
+</div>
+
+<% } %> <%- include('../partials/footer.ejs') %>

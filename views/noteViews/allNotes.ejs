@@ -1,0 +1,21 @@
+<%- include('../partials/header.ejs') %>
+<a href="/">back</a>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8">
+      <% data.forEach(d => { %>
+      <div class="card p-3 mb-3 shadow">
+        <h3><%= d.habitat %></h3>
+        <p><%= d.flock_size %></p>
+        <p><%= d.date %></p>
+        <p><%= d.behaviour %></p>
+        <a href="http://localhost:3000/note/single/<%= d.id %> ">Link</a>
+      </div>
+
+      <% }) %> %>
+    </div>
+    <div class="col-sm-2"></div>
+  </div>
+</div>
+<%- include('../partials/footer.ejs') %>
